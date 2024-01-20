@@ -401,6 +401,22 @@ public static Trajectory GoBackwardsToDropBlockFast () {
             return trajectory; 
     }
 
+
+    // Test Trajectory to go forward for ring launch
+    public static Trajectory trajectoryForwardTest () {
+        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(0,0)),
+        // End 3 "meters" straight ahead of where we started, facing forward
+        new Pose2d(1, 0, new Rotation2d(0)),
+                config);
+        
+                return trajectory; 
+        }
+    
+
     public static Trajectory trajectoryAutoDriveOutLeft() {
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction

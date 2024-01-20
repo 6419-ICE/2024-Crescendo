@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.GrabberConstantsForPIDAndMotionProfile;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoDriveOutOfCommunity;
+import frc.robot.commands.SampleAutoOutofCommunity;
 import frc.robot.commands.AutoTestForPaths;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,6 +52,7 @@ public class RobotContainer {
     autoChooser.setDefaultOption("None", null);
     //autoChooser.addOption("Auto Drive Out Of Community", new AutoDriveOutOfCommunity(m_robotDrive));
     autoChooser.addOption("Auto Test For Paths", new AutoTestForPaths(m_robotDrive));
+    autoChooser.addOption("Sample Auto Test Forward", new SampleAutoOutofCommunity(m_robotDrive));
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
