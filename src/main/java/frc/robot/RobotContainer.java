@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -28,41 +28,40 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  
+
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  //private final Arm m_Arm = new Arm();
+  // private final Arm m_Arm = new Arm();
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   static Joystick mechanismJoystick = new Joystick(Constants.ButtonBoxID);
-  static JoystickButton coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
-  static JoystickButton coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
-  static JoystickButton GrabberOpenButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.GrabberOpen);
-  static JoystickButton GrabberCloseButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.GrabberClose);
-  //private HandleArm handleArm = new HandleArm(m_Arm);
+  static JoystickButton coneFlipperUpButton = new JoystickButton(mechanismJoystick,
+      Constants.GamePadConstants.ConeFlipperUp);
+  static JoystickButton coneFlipperDownButton = new JoystickButton(mechanismJoystick,
+      Constants.GamePadConstants.ConeFlipperDown);
+  static JoystickButton GrabberOpenButton = new JoystickButton(mechanismJoystick,
+      Constants.GamePadConstants.GrabberOpen);
+  static JoystickButton GrabberCloseButton = new JoystickButton(mechanismJoystick,
+      Constants.GamePadConstants.GrabberClose);
   private static DutyCycleEncoder coneFlipperEncoder = new DutyCycleEncoder(Constants.FlipperEncoderID);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private static SendableChooser<Command> autoChooser;
+
   public RobotContainer() {
     // Configure the button bindings
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("None", null);
-    //autoChooser.addOption("Auto Drive Out Of Community", new AutoDriveOutOfCommunity(m_robotDrive));
     autoChooser.addOption("Auto Test For Paths", new AutoTestForPaths(m_robotDrive));
-      // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
-    //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
-    //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
-    //autoChooser.addOption("Auto Run Until Angle", new AutoDriveUntilAngle(m_robotDrive, boolSupplier));
     SmartDashboard.putData("Autonomous", autoChooser);
-    //Shuffleboard.getTab("Gryo tab").add(m_robotDrive.m_gyro);
 
     configureButtonBindings();
     JoystickButton ArmRetractButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmRetract);
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
+
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
@@ -88,103 +87,60 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
-            coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
-            coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
+    coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
+    coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
   }
+
   public static boolean GetConeFlipperUpButton() {
     return mechanismJoystick.getRawButton(Constants.GamePadConstants.ConeFlipperUp);
   }
+
   public static boolean GetConeFlipperDownButton() {
     return mechanismJoystick.getRawButton(Constants.GamePadConstants.ConeFlipperDown);
   }
- public static boolean GetGrabberCloseButton() {
-  return mechanismJoystick.getRawButton(Constants.GamePadConstants.GrabberClose);
-  
- } 
- public static boolean GetGrabberOpenButton() {
-  return mechanismJoystick.getRawButton(Constants.GamePadConstants.GrabberOpen);
- } 
 
- public static boolean GetCubeInButton() {
-  return mechanismJoystick.getRawButton(1);
- } 
- public static boolean GetCubeOutButton() {
-  return mechanismJoystick.getRawButton(2);
- } 
+  public static boolean GetGrabberCloseButton() {
+    return mechanismJoystick.getRawButton(Constants.GamePadConstants.GrabberClose);
 
- public static boolean GetArmExtendButton() {
-  return mechanismJoystick.getRawButton(Constants.GamePadConstants.ArmExtend);
- }
- public static boolean GetArmRetractButton() {
-  return mechanismJoystick.getRawButton(Constants.GamePadConstants.ArmRetract);
- }
- public static boolean GetArmGroundButton() {
-  return mechanismJoystick.getRawButton(Constants.GamePadConstants.ArmGround);
- }
- public static DutyCycleEncoder GetFlipperEncoder() {
-  return coneFlipperEncoder;
-}
-public static boolean GetGrabberCloseCubeButton() {
-  return mechanismJoystick.getRawButton(Constants.GamePadConstants.GrabberCloseCube);
- } 
+  }
+
+  public static boolean GetGrabberOpenButton() {
+    return mechanismJoystick.getRawButton(Constants.GamePadConstants.GrabberOpen);
+  }
+
+  public static boolean GetCubeInButton() {
+    return mechanismJoystick.getRawButton(1);
+  }
+
+  public static boolean GetCubeOutButton() {
+    return mechanismJoystick.getRawButton(2);
+  }
+
+  public static boolean GetArmExtendButton() {
+    return mechanismJoystick.getRawButton(Constants.GamePadConstants.ArmExtend);
+  }
+
+  public static boolean GetArmRetractButton() {
+    return mechanismJoystick.getRawButton(Constants.GamePadConstants.ArmRetract);
+  }
+
+  public static boolean GetArmGroundButton() {
+    return mechanismJoystick.getRawButton(Constants.GamePadConstants.ArmGround);
+  }
+
+  public static DutyCycleEncoder GetFlipperEncoder() {
+    return coneFlipperEncoder;
+  }
+
+  public static boolean GetGrabberCloseCubeButton() {
+    return mechanismJoystick.getRawButton(Constants.GamePadConstants.GrabberCloseCube);
+  }
 
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return  autoChooser.getSelected();
+    return autoChooser.getSelected();
   }
-
-  
 
   public void disablePIDSubsystems() {
-    //m_GrabberWithPID.disable();
-    //m_ArmWithPID.disable();
   }
-  //Comment To Test Merges
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  /* 
-  public Command getAutonomousCommand() {
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
-
-    // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        config);
-
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
-
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-  }
-  */
 }

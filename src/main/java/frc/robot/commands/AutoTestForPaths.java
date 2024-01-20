@@ -17,27 +17,18 @@ public class AutoTestForPaths extends SequentialCommandGroup {
   /** Creates a new Autonomous Program. */
 
   public AutoTestForPaths(DriveSubsystem driveSubsystem) {
-  
-    addCommands(
-      
-      Commands.sequence(
-        new TrajectoryCommand(driveSubsystem, TrajectoryPaths.GoForwardToTurnFast()),
-        new TurnToAngleProfiled(10, driveSubsystem).withTimeout(0.5),
-        new TurnToAngleProfiled(179.999, driveSubsystem).withTimeout(3),
-        new TrajectoryCommand(driveSubsystem, TrajectoryPaths.GoBackwardsTowardsBlockFast()),
-        new TrajectoryCommand(driveSubsystem, TrajectoryPaths.GoForwardToTurnOnWayBackFast()),
-        new TurnToAngleProfiled(160, driveSubsystem).withTimeout(0.5),
-        new TurnToAngleProfiled(0, driveSubsystem).withTimeout(3),
-        new TrajectoryCommand(driveSubsystem, TrajectoryPaths.GoBackwardsToDropBlockFast())
 
-       // new WaitCommand(2),
-       // new TurnToAngleProfiled(-179.999, driveSubsystem).withTimeout(3), 
-       // new TrajectoryCommand(driveSubsystem, TrajectoryPaths.trajectoryAutoForwardTowardsSecondBlock()),
-       // new TrajectoryCommand(driveSubsystem, TrajectoryPaths.trajectoryAutoForwardBackFromSecondBlock()),
-       // new TurnToAngleProfiled(0, driveSubsystem).withTimeout(3)
-        
-        )
-    );
+    addCommands(
+
+        Commands.sequence(
+            new TrajectoryCommand(driveSubsystem, TrajectoryPaths.GoForwardToTurnFast()),
+            new TurnToAngleProfiled(10, driveSubsystem).withTimeout(0.5),
+            new TurnToAngleProfiled(179.999, driveSubsystem).withTimeout(3),
+            new TrajectoryCommand(driveSubsystem, TrajectoryPaths.GoBackwardsTowardsBlockFast()),
+            new TrajectoryCommand(driveSubsystem, TrajectoryPaths.GoForwardToTurnOnWayBackFast()),
+            new TurnToAngleProfiled(160, driveSubsystem).withTimeout(0.5),
+            new TurnToAngleProfiled(0, driveSubsystem).withTimeout(3),
+            new TrajectoryCommand(driveSubsystem, TrajectoryPaths.GoBackwardsToDropBlockFast())));
 
   }
 }

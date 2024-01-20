@@ -24,21 +24,21 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 
-
 public final class Constants {
   public static final int ButtonBoxID = 1;
   public static final int FlipperEncoderID = 9;
-  //public static final double GripperUnitsPerDegree = 768;
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
     public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13);
-    public static final double kMaxAngularSpeed = 2*Math.PI; // radians per second //2*math.pi
+    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second //2*math.pi
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(20.5); //20.75 old
+    public static final double kTrackWidth = Units.inchesToMeters(20.5); // 20.75 old
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(31.25); //31.5
+    public static final double kWheelBase = Units.inchesToMeters(31.25); // 31.5
+
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -70,12 +70,15 @@ public final class Constants {
   }
 
   public static final class ModuleConstants {
-    // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
-    // This changes the drive speed of the module (a pinion gear with more teeth will result in a
+    // The MAXSwerve module can be configured with one of three pinion gears: 12T,
+    // 13T, or 14T.
+    // This changes the drive speed of the module (a pinion gear with more teeth
+    // will result in a
     // robot that drives faster).
     public static final int kDrivingMotorPinionTeeth = 12;
 
-    // Invert the turning encoder, since the output shaft rotates in the opposite direction of
+    // Invert the turning encoder, since the output shaft rotates in the opposite
+    // direction of
     // the steering motor in the MAXSwerve Module.
     public static final boolean kTurningEncoderInverted = true;
 
@@ -83,8 +86,9 @@ public final class Constants {
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
     public static final double kWheelDiameterMeters = 0.0762;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
-    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
-    public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15); //15
+    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
+    // teeth on the bevel pinion
+    public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15); // 15
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
         / kDrivingMotorReduction;
 
@@ -99,7 +103,7 @@ public final class Constants {
     public static final double kTurningEncoderPositionPIDMinInput = 0; // radians
     public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
 
-    public static final double kDrivingP = 0.055726; //0.055726;
+    public static final double kDrivingP = 0.055726; // 0.055726;
     public static final double kDrivingI = 0;
     public static final double kDrivingD = 0;
     public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps;
@@ -125,9 +129,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-
-    public static final double kMaxSpeedMetersPerSecond = 0.3; //3
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.3; //3
+    public static final double kMaxSpeedMetersPerSecond = 0.3; // 3
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.3; // 3
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -141,10 +144,9 @@ public final class Constants {
   }
 
   public static final class NeoMotorConstants {
-
     public static final double kFreeSpeedRpm = 5676;
   }
-  
+
   public static final class GamePadConstants {
     public static final int ConeFlipperUp = 1;
     public static final int ConeFlipperDown = 2;
@@ -154,72 +156,67 @@ public final class Constants {
     public static final int ArmRetract = 6;
     public static final int ArmExtend = 7;
     public static final int ArmGround = 8;
-
   }
 
-  public static class GrabberConstantsForPIDAndMotionProfile{
+  public static class GrabberConstantsForPIDAndMotionProfile {
     public static final int kMotorPort = 12;
 
-    public static final double kP = 1;//1
+    public static final double kP = 1;// 1
 
-    // These are fake gains; in actuality these must be determined individually for each robot
+    // These are fake gains; in actuality these must be determined individually for
+    // each robot
     public static final double kSVolts = 1;
     public static final double kGVolts = 1;
     public static final double kVVoltSecondPerRad = 0.5;
     public static final double kAVoltSecondSquaredPerRad = 0.1;
     public static final double GrabberUnitsPerDegree = 768;
 
-
     public static final double kMaxVelocityRadPerSecond = 3.0;
     public static final double kMaxAccelerationRadPerSecSquared = 10.0;
 
-    public static final int[] kEncoderPorts = new int[] {4, 5};
+    public static final int[] kEncoderPorts = new int[] { 4, 5 };
     public static final int kEncoderPPR = 256;
     public static final double kEncoderDistancePerPulse = 2.0 * Math.PI / kEncoderPPR;
 
     // The offset of the arm from the horizontal in its neutral position,
     // measured from the horizontal
     public static final double kArmOffsetRads = 0.5;
-    //saftey Offsets.
+    // saftey Offsets.
     public static final double kArmMinOffsetRads = Math.toRadians(0);
     public static final double kArmMaxOffsetRads = Math.toRadians(110);
-    
-
   }
 
-
-  public static class ArmConstantsForPIDAndMotionProfile{
+  public static class ArmConstantsForPIDAndMotionProfile {
     public static final int kMotorPort = 11;
-    public static final double homePosition = 0; 
-    public static final double dropPosition = 180; 
-    public static final double groundPosition = 270; //250 old, 270 current(269) 
-    public static final double kP = 1.3;//1
-    public static final double kd = 0.11; 
+    public static final double homePosition = 0;
+    public static final double dropPosition = 180;
+    public static final double groundPosition = 270; // 250 old, 270 current(269)
+    public static final double kP = 1.3;// 1
+    public static final double kd = 0.11;
 
-    // These are fake gains; in actuality these must be determined individually for each robot
+    // These are fake gains; in actuality these must be determined individually for
+    // each robot
     public static final double kSVolts = 1;
     public static final double kGVolts = 1;
     public static final double kVVoltSecondPerRad = 0.5;
     public static final double kAVoltSecondSquaredPerRad = 0.1;
     public static final double ArmUnitsPerDegree = 1024;
 
-
     public static final double kMaxVelocityRadPerSecond = 1.4;
     public static final double kMaxAccelerationRadPerSecSquared = 3.2;
 
-    public static final int[] kEncoderPorts = new int[] {4, 5};
+    public static final int[] kEncoderPorts = new int[] { 4, 5 };
     public static final int kEncoderPPR = 256;
     public static final double kEncoderDistancePerPulse = 2.0 * Math.PI / kEncoderPPR;
 
     // The offset of the arm from the horizontal in its neutral position,
     // measured from the horizontal
     public static final double kArmOffsetRads = 0.5;
-    //saftey Offsets.
+    // saftey Offsets.
     public static final double kArmMinOffsetRads = Math.toRadians(0);
     public static final double kArmMaxOffsetRads = Math.toRadians(265);
-    
-
   }
+
   public static class IntakeConstants {
     public static final double stopVal = 500;
   }
