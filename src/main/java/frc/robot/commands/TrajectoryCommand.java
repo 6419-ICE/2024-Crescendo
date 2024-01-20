@@ -3,33 +3,29 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.AutoConstants;
-
+import frc.robot.Constants.DriveConstants;
+import frc.robot.subsystems.DriveSubsystem;
 
 // This is the TrajectoryCommand Class, which extends the swerveControllerComandClass from wplib. This class is a command.
 // You should call this command in automous(see the autoDriveOutOfCommunity), in conjunction with other commands. 
-public class TrajectoryCommand extends SwerveControllerCommand{
+public class TrajectoryCommand extends SwerveControllerCommand {
 
-    private DriveSubsystem m_driveSubSystem;
-    private Trajectory m_Trajectory;
+  private DriveSubsystem m_driveSubSystem;
+  private Trajectory m_Trajectory;
 
-    private static ProfiledPIDController createThetaController() {
-      var thetaController = new ProfiledPIDController(
+  private static ProfiledPIDController createThetaController() {
+    var thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-      thetaController.enableContinuousInput(-Math.PI,Math.PI);
-      thetaController.setTolerance(0.01 * Math.PI);
-      return thetaController;
-    }
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.setTolerance(0.01 * Math.PI);
+    return thetaController;
+  }
 
-        
-    public TrajectoryCommand(DriveSubsystem driveSubSystem, Trajectory trajectory)
-    {
-        //thetaController.enableContinuousInput(-Math.PI, Math.PI);
-        super(trajectory,
+  public TrajectoryCommand(DriveSubsystem driveSubSystem, Trajectory trajectory) {
+    // thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    super(trajectory,
         driveSubSystem::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 
@@ -39,18 +35,15 @@ public class TrajectoryCommand extends SwerveControllerCommand{
         createThetaController(),
         driveSubSystem::setModuleStates,
         driveSubSystem);
-        this.m_Trajectory = trajectory; 
-        this.m_driveSubSystem = driveSubSystem;
-        addRequirements(driveSubSystem);
-    }
+    this.m_Trajectory = trajectory;
+    this.m_driveSubSystem = driveSubSystem;
+    addRequirements(driveSubSystem);
+  }
 
-    
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     System.out.println("INITIALIZE");
-    //m_driveSubSystem.setMaxMotorSpeed(Constants.DrivetrainConstants.speedLmt);
-    //m_drive.resetHeading();
     m_driveSubSystem.resetOdometry(m_Trajectory.getInitialPose());
     super.initialize();
   }
@@ -62,8 +55,6 @@ public class TrajectoryCommand extends SwerveControllerCommand{
     System.out.println("FrontRight" + m_driveSubSystem.getEncoderPositions()[1]);
     System.out.println("BackLeft" + m_driveSubSystem.getEncoderPositions()[2]);
     System.out.println("BackRight" + m_driveSubSystem.getEncoderPositions()[3]);
-    //SmartDashboard.putNumber("Current Pose", m_driveSubSystem.getPose().getX());
-    //System.out.println("execute");
     super.execute();
   }
 
