@@ -8,13 +8,19 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.GrabberConstantsForPIDAndMotionProfile;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoDriveOutOfCommunity;
 import frc.robot.commands.AutoTestForPaths;
+import frc.robot.commands.FireLauncherCommand;
+import frc.robot.commands.LimelightCommands;
+import frc.robot.commands.LimelightTestCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -31,6 +37,9 @@ public class RobotContainer {
   
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final LimelightSubsystem m_limeLightChassis = new LimelightSubsystem(Constants.LimelightConstants.chassisHostName);
+  private final LimelightSubsystem m_limeLightTurret = new LimelightSubsystem(Constants.LimelightConstants.turretHostName);
+  private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   //private final Arm m_Arm = new Arm();
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -49,18 +58,22 @@ public class RobotContainer {
     // Configure the button bindings
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("None", null);
+    autoChooser.addOption("Limelight test",new LimelightTestCommand(m_limeLightChassis).alongWith(new LimelightTestCommand(m_limeLightTurret)));
     //autoChooser.addOption("Auto Drive Out Of Community", new AutoDriveOutOfCommunity(m_robotDrive));
     autoChooser.addOption("Auto Test For Paths", new AutoTestForPaths(m_robotDrive));
+    autoChooser.addOption("Turn to", new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, null));
+    autoChooser.addOption("Launch", new FireLauncherCommand(m_launcher));
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
     //autoChooser.addOption("Auto Run Until Angle", new AutoDriveUntilAngle(m_robotDrive, boolSupplier));
     SmartDashboard.putData("Autonomous", autoChooser);
+    
     //Shuffleboard.getTab("Gryo tab").add(m_robotDrive.m_gyro);
-
     configureButtonBindings();
     JoystickButton ArmRetractButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmRetract);
-
+    JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
+    turnToLimelight.onTrue(new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, ()->0).withTimeout(3));
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -72,7 +85,10 @@ public class RobotContainer {
                 MathUtil.applyDeadband(-m_driverController.getRightX(), 0.06),
                 true),
             m_robotDrive));
+    m_limeLightChassis.setDefaultCommand(new LimelightTestCommand(m_limeLightChassis));
+    m_limeLightTurret.setDefaultCommand(new LimelightTestCommand(m_limeLightTurret));
   }
+ 
 
   /**
    * Use this method to define your button->command mappings. Buttons can be

@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -222,5 +223,21 @@ public final class Constants {
   }
   public static class IntakeConstants {
     public static final double stopVal = 500;
+  }
+  public static class LimelightConstants {
+    public static final PIDController rotatePID = new PIDController(0.03, 0, 0);
+    public static final String turretHostName = "-turret";
+    public static final String chassisHostName = "-body";
+    //driving PID values
+    public static final PIDController xPID = new PIDController(0.1,0,0);
+    public static final PIDController yPID = new PIDController(0.1,0,0);
+    public static final PIDController headingPID = new PIDController(0.1,0,0);
+  }
+  public static class LauncherConstants {
+    public static final int leftMotorID = 14;
+    public static final int rightMotorID = 13;
+    public static final int stagingMotor = 0;
+    public static final int verticalAimMotor = 0;
+    public static final PIDController verticalAimPID = new PIDController(0, 0, 0);
   }
 }
