@@ -13,7 +13,9 @@ public class SampleAutoOutofCommunity extends SequentialCommandGroup{
         addCommands(
           
           Commands.sequence(
-            new TrajectoryCommand(driveSubsystem, TrajectoryPaths.trajectoryForwardTest())
+            new TrajectoryCommand(driveSubsystem, TrajectoryPaths.TrialOne()),
+            new WaitCommand(2),
+            new TrajectoryCommand(driveSubsystem, TrajectoryPaths.TrialTwo())
 
            // new TurnToAngleProfiled(-179.999, driveSubsystem).withTimeout(3), 
            // new TrajectoryCommand(driveSubsystem, TrajectoryPaths.trajectoryAutoForwardTowardsSecondBlock()),
