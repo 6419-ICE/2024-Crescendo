@@ -3,6 +3,8 @@ package frc.robot.commands;
 import java.util.function.IntSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants;
@@ -58,8 +60,8 @@ public static class DriveTo extends Command {
         yPID.setSetpoint(0);
         headingPID.setSetpoint(0);
         //set tolerance, placeholdder values right now
-        xPID.setTolerance(0.1);
-        yPID.setTolerance(0.1);
+        xPID.setTolerance(Units.inchesToMeters(1));
+        yPID.setTolerance(Units.inchesToMeters(1));
         headingPID.setTolerance(0.1);
     }
     @Override
@@ -68,14 +70,17 @@ public static class DriveTo extends Command {
     public void execute() {
         //get the 3d pos of the apriltag from the subsytem
         double[] tagPos = m_limelight.get3dPose();
+        
         //xPID uses the Z pos of the aprilTag, but controls the x speed of the drivetrain
         //yPID uses x pos, but controls the y speed
         //headingPID uses the "2d" x output, keeping the apriltag centered with the robot
         m_drive.drive(
             xPID.calculate(tagPos[2]), 
-            yPID.calculate(tagPos[0]), 
-            headingPID.calculate(m_limelight.getX()), false
+            -yPID.calculate(tagPos[0]), //limelight is on back of robot, so values are reversed
+            -headingPID.calculate(tagPos[5]), // right is positive in limelight, reversed to fit with drivetrain
+            true
         );
+        System.out.printf("X: %f \nY: %f \nHeading: %f\n",tagPos[2],tagPos[0],m_limelight.getX());
     }
     @Override
     public void end(boolean interrupted) {}

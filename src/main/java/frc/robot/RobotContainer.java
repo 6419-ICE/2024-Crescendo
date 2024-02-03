@@ -16,11 +16,13 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoDriveOutOfCommunity;
 import frc.robot.commands.AutoTestForPaths;
 import frc.robot.commands.FireLauncherCommand;
+import frc.robot.commands.FireSingleMotorLauncherCommand;
 import frc.robot.commands.LimelightCommands;
 import frc.robot.commands.LimelightTestCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.SingleMotorLauncherSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -40,6 +42,7 @@ public class RobotContainer {
   private final LimelightSubsystem m_limeLightChassis = new LimelightSubsystem(Constants.LimelightConstants.chassisHostName);
   private final LimelightSubsystem m_limeLightTurret = new LimelightSubsystem(Constants.LimelightConstants.turretHostName);
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
+  private final SingleMotorLauncherSubsystem m_singleMotorLauncher = new SingleMotorLauncherSubsystem();
   //private final Arm m_Arm = new Arm();
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -63,6 +66,7 @@ public class RobotContainer {
     autoChooser.addOption("Auto Test For Paths", new AutoTestForPaths(m_robotDrive));
     autoChooser.addOption("Turn to", new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, null));
     autoChooser.addOption("Launch", new FireLauncherCommand(m_launcher));
+    autoChooser.addOption("Single Motor Launch", new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
@@ -73,8 +77,12 @@ public class RobotContainer {
     configureButtonBindings();
     JoystickButton ArmRetractButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmRetract);
     JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
+    JoystickButton driveToLimelight = new JoystickButton(m_driverController, 2);
+    JoystickButton fireLauncher = new JoystickButton(m_driverController, 3);
+    fireLauncher.toggleOnTrue(new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
     turnToLimelight.onTrue(new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, ()->0).withTimeout(3));
-    // Configure default commands
+    driveToLimelight.onTrue(new LimelightCommands.DriveTo(m_robotDrive, m_limeLightTurret, 1));
+    //Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.

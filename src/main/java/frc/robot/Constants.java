@@ -74,7 +74,7 @@ public final class Constants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
     // robot that drives faster).
-    public static final int kDrivingMotorPinionTeeth = 12;
+    public static final int kDrivingMotorPinionTeeth = 14;
 
     // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
@@ -229,13 +229,14 @@ public final class Constants {
     public static final String turretHostName = "-turret";
     public static final String chassisHostName = "-body";
     //driving PID values
-    public static final PIDController xPID = new PIDController(0.1,0,0);
-    public static final PIDController yPID = new PIDController(0.1,0,0);
-    public static final PIDController headingPID = new PIDController(0.1,0,0);
+    public static final PIDController xPID = new PIDController(0.23,0,0);
+    public static final PIDController yPID = new PIDController(0.23,0,0);
+    public static final PIDController headingPID = new PIDController(0.01,0,0);
   }
   public static class LauncherConstants {
     public static final int leftMotorID = 14;
     public static final int rightMotorID = 13;
+    public static final int singleMotorID = 13;
     public static final int stagingMotor = 0;
     public static final int verticalAimMotor = 0;
     public static final PIDController verticalAimPID = new PIDController(0, 0, 0);

@@ -13,7 +13,7 @@ public class LauncherSubsystem extends SubsystemBase {
     public LauncherSubsystem() {
         leftMotor = new TalonFX(Constants.LauncherConstants.leftMotorID);
         rightMotor = new TalonFX(Constants.LauncherConstants.rightMotorID);
-        rightMotor.setInverted(true);
+       // rightMotor.setInverted(true); not inverted, motors are working together 
     
     }
     public void setPower(double speed) {
