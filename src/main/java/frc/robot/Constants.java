@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -158,72 +159,6 @@ public final class Constants {
 
   }
 
-  public static class GrabberConstantsForPIDAndMotionProfile{
-    public static final int kMotorPort = 12;
-
-    public static final double kP = 1;//1
-
-    // These are fake gains; in actuality these must be determined individually for each robot
-    public static final double kSVolts = 1;
-    public static final double kGVolts = 1;
-    public static final double kVVoltSecondPerRad = 0.5;
-    public static final double kAVoltSecondSquaredPerRad = 0.1;
-    public static final double GrabberUnitsPerDegree = 768;
-
-
-    public static final double kMaxVelocityRadPerSecond = 3.0;
-    public static final double kMaxAccelerationRadPerSecSquared = 10.0;
-
-    public static final int[] kEncoderPorts = new int[] {4, 5};
-    public static final int kEncoderPPR = 256;
-    public static final double kEncoderDistancePerPulse = 2.0 * Math.PI / kEncoderPPR;
-
-    // The offset of the arm from the horizontal in its neutral position,
-    // measured from the horizontal
-    public static final double kArmOffsetRads = 0.5;
-    //saftey Offsets.
-    public static final double kArmMinOffsetRads = Math.toRadians(0);
-    public static final double kArmMaxOffsetRads = Math.toRadians(110);
-    
-
-  }
-
-
-  public static class ArmConstantsForPIDAndMotionProfile{
-    public static final int kMotorPort = 11;
-    public static final double homePosition = 0; 
-    public static final double dropPosition = 180; 
-    public static final double groundPosition = 270; //250 old, 270 current(269) 
-    public static final double kP = 1.3;//1
-    public static final double kd = 0.11; 
-
-    // These are fake gains; in actuality these must be determined individually for each robot
-    public static final double kSVolts = 1;
-    public static final double kGVolts = 1;
-    public static final double kVVoltSecondPerRad = 0.5;
-    public static final double kAVoltSecondSquaredPerRad = 0.1;
-    public static final double ArmUnitsPerDegree = 1024;
-
-
-    public static final double kMaxVelocityRadPerSecond = 1.4;
-    public static final double kMaxAccelerationRadPerSecSquared = 3.2;
-
-    public static final int[] kEncoderPorts = new int[] {4, 5};
-    public static final int kEncoderPPR = 256;
-    public static final double kEncoderDistancePerPulse = 2.0 * Math.PI / kEncoderPPR;
-
-    // The offset of the arm from the horizontal in its neutral position,
-    // measured from the horizontal
-    public static final double kArmOffsetRads = 0.5;
-    //saftey Offsets.
-    public static final double kArmMinOffsetRads = Math.toRadians(0);
-    public static final double kArmMaxOffsetRads = Math.toRadians(265);
-    
-
-  }
-  public static class IntakeConstants {
-    public static final double stopVal = 500;
-  }
   public static class LimelightConstants {
     public static final PIDController rotatePID = new PIDController(0.03, 0, 0);
     public static final String turretHostName = "-turret";
@@ -240,5 +175,12 @@ public final class Constants {
     public static final int stagingMotor = 0;
     public static final int verticalAimMotor = 0;
     public static final PIDController verticalAimPID = new PIDController(0, 0, 0);
+  }
+  public static class IntakeConstants {
+    public static int intakeMotorID = 24;
+    public static double intakeSpeed = -0.5;
+    public static double outtakeSpeed = 0.5;
+    public static int intakeButton = 4;
+    public static int outtakeButton = 5;
   }
 }

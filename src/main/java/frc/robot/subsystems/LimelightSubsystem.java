@@ -12,11 +12,13 @@ public class LimelightSubsystem extends SubsystemBase {
     private double x,y;
     private double area;
     private double[] pose;
+    private double id;
     private NetworkTable table;
     private NetworkTableEntry tx; //x
     private NetworkTableEntry ty; //y
     private NetworkTableEntry ta; //area
     private NetworkTableEntry tpose; //apriltag position []{x,y,z,rx,ry,rz}
+    private NetworkTableEntry tid; //Tag ID
     /**
      * 
      * @param hostName the hostname of the limelight, determines which camera is used
@@ -34,6 +36,7 @@ public class LimelightSubsystem extends SubsystemBase {
         ty = table.getEntry("ty");
         ta = table.getEntry("ta");
         tpose = table.getEntry("targetpose_cameraspace");
+        tid = table.getEntry("tid");
     }
     public void periodic() {
         //update values periodically
@@ -62,5 +65,8 @@ public class LimelightSubsystem extends SubsystemBase {
     }
     public String getHostName() {
         return table.getPath().replaceAll("/limelight","");
+    }
+    public int getTagID() {
+        return (int) id;
     }
 }

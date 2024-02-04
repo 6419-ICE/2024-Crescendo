@@ -18,7 +18,7 @@ public class FireLauncherCommand extends Command {
     @Override
     public void initialize() {
         //m_launcher.setStaging(0.2);
-        m_launcher.setPower(1);
+        m_launcher.setPower(0.8);
         //start the timer
         time.restart();
     }

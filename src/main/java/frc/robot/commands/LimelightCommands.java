@@ -93,4 +93,18 @@ public static class DriveTo extends Command {
         headingPID.atSetpoint();
     }
 }
+/**
+ * Drives to the closest point that is X distance from the main in-view apriltag
+ * <p>
+ * This is done by first centering the apriltag using the {@link LimeLightCommands#TurnTo TurnTo} command, then 
+ * </p>
+ */
+// public static class DriveToDistance extends PIDCommand {
+//     public DriveToDistance(double meters) {
+
+//     }
+//     private double distanceToTargetHeight(double meters) {
+
+//     }
+// }
 }

@@ -11,15 +11,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import frc.robot.Constants.GrabberConstantsForPIDAndMotionProfile;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoDriveOutOfCommunity;
 import frc.robot.commands.AutoTestForPaths;
 import frc.robot.commands.FireLauncherCommand;
 import frc.robot.commands.FireSingleMotorLauncherCommand;
+import frc.robot.commands.IntakeStateCommand;
 import frc.robot.commands.LimelightCommands;
 import frc.robot.commands.LimelightTestCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SingleMotorLauncherSubsystem;
@@ -41,11 +42,12 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final LimelightSubsystem m_limeLightChassis = new LimelightSubsystem(Constants.LimelightConstants.chassisHostName);
   private final LimelightSubsystem m_limeLightTurret = new LimelightSubsystem(Constants.LimelightConstants.turretHostName);
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private final SingleMotorLauncherSubsystem m_singleMotorLauncher = new SingleMotorLauncherSubsystem();
   //private final Arm m_Arm = new Arm();
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  static XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   static Joystick mechanismJoystick = new Joystick(Constants.ButtonBoxID);
   static JoystickButton coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
   static JoystickButton coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
@@ -79,6 +81,8 @@ public class RobotContainer {
     JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
     JoystickButton driveToLimelight = new JoystickButton(m_driverController, 2);
     JoystickButton fireLauncher = new JoystickButton(m_driverController, 3);
+    JoystickButton intake = new JoystickButton(m_driverController, Constants.IntakeConstants.intakeButton);
+    JoystickButton outtake = new JoystickButton(m_driverController, Constants.IntakeConstants.outtakeButton);
     fireLauncher.toggleOnTrue(new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
     turnToLimelight.onTrue(new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, ()->0).withTimeout(3));
     driveToLimelight.onTrue(new LimelightCommands.DriveTo(m_robotDrive, m_limeLightTurret, 1));
@@ -95,6 +99,7 @@ public class RobotContainer {
             m_robotDrive));
     m_limeLightChassis.setDefaultCommand(new LimelightTestCommand(m_limeLightChassis));
     m_limeLightTurret.setDefaultCommand(new LimelightTestCommand(m_limeLightTurret));
+    m_intake.setDefaultCommand(new IntakeStateCommand(m_intake));
   }
  
 
@@ -114,6 +119,12 @@ public class RobotContainer {
             m_robotDrive));
             coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
             coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
+  }
+  public static boolean getIntakeButton() {
+    return m_driverController.getLeftBumper();
+  }
+  public static boolean getOuttakeButton() {
+    return m_driverController.getRightBumper();
   }
   public static boolean GetConeFlipperUpButton() {
     return mechanismJoystick.getRawButton(Constants.GamePadConstants.ConeFlipperUp);
