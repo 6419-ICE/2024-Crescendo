@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoDriveOutOfCommunity;
 import frc.robot.commands.AutoTestForPaths;
+import frc.robot.commands.DistanceTestCommand;
 import frc.robot.commands.FireLauncherCommand;
 import frc.robot.commands.FireSingleMotorLauncherCommand;
 import frc.robot.commands.IntakeStateCommand;
@@ -71,6 +72,7 @@ public class RobotContainer {
     autoChooser.addOption("Launch", new FireLauncherCommand(m_launcher));
     autoChooser.addOption("Single Motor Launch", new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
     autoChooser.addOption("align at distance",new LimelightCommands.AlignAtDistance(m_limeLightTurret, m_robotDrive, Units.metersToInches(2)));
+    autoChooser.addOption("Move 2 meter", new DistanceTestCommand(m_robotDrive));
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
