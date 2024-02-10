@@ -14,5 +14,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setSpeed(double speed) {
         motor.set(speed);
     }
-    
+    public CANSparkMax getMotor() {
+        return motor;
+    }
 }

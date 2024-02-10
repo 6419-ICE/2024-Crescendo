@@ -38,6 +38,7 @@ public class LimelightSubsystem extends SubsystemBase {
         tpose = table.getEntry("targetpose_cameraspace");
         tid = table.getEntry("tid");
     }
+    @Override
     public void periodic() {
         //update values periodically
         x = tx.getDouble(0.0);

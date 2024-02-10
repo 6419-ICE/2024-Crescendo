@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -69,6 +70,7 @@ public class RobotContainer {
     autoChooser.addOption("Turn to", new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, null));
     autoChooser.addOption("Launch", new FireLauncherCommand(m_launcher));
     autoChooser.addOption("Single Motor Launch", new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
+    autoChooser.addOption("align at distance",new LimelightCommands.AlignAtDistance(m_limeLightTurret, m_robotDrive, Units.metersToInches(2)));
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
@@ -99,7 +101,9 @@ public class RobotContainer {
             m_robotDrive));
     m_limeLightChassis.setDefaultCommand(new LimelightTestCommand(m_limeLightChassis));
     m_limeLightTurret.setDefaultCommand(new LimelightTestCommand(m_limeLightTurret));
-    m_intake.setDefaultCommand(new IntakeStateCommand(m_intake));
+    IntakeStateCommand intakeStateCmd = new IntakeStateCommand(m_intake);
+    intakeStateCmd.setButtons(m_driverController::getLeftBumper,m_driverController::getRightBumper); //configure keybinds for intake
+    m_intake.setDefaultCommand(intakeStateCmd);
   }
  
 
@@ -116,7 +120,9 @@ public class RobotContainer {
     new JoystickButton(m_driverController, Button.kR1.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
-            m_robotDrive));
+            m_robotDrive
+            ));
+            
             coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
             coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
   }

@@ -167,6 +167,11 @@ public final class Constants {
     public static final PIDController xPID = new PIDController(0.23,0,0);
     public static final PIDController yPID = new PIDController(0.23,0,0);
     public static final PIDController headingPID = new PIDController(0.01,0,0);
+    //Limelight positioning 
+    //Angle of the limelight (in degrees) with 0 being perfectly vertical 
+    public static final double limelightAngleDegrees = 36.86989764584402; //used tan for this, probably a little off
+    // Distance from the center of the limelight lens to the floor
+    public static final double limelightHeight = 10.5; //todo
   }
   public static class LauncherConstants {
     public static final int leftMotorID = 14;

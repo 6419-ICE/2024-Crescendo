@@ -7,6 +7,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -94,17 +95,62 @@ public static class DriveTo extends Command {
     }
 }
 /**
- * Drives to the closest point that is X distance from the main in-view apriltag
+ * Drives to the closest point that is X distance from the main in-view apriltag. This is private to prevent it from being used without {@link TurnTo}. This can only be run through {@link AlignAtDistance}
  * <p>
- * This is done by first centering the apriltag using the {@link LimeLightCommands#TurnTo TurnTo} command, then 
+ * This is done by first centering the apriltag using the {@link TurnTo} command, then moving until the apriltag is at the target Y
  * </p>
+ * @see AlignAtDistance
  */
-// public static class DriveToDistance extends PIDCommand {
-//     public DriveToDistance(double meters) {
-
-//     }
-//     private double distanceToTargetHeight(double meters) {
-
-//     }
-// }
+private static class DriveToDistance extends PIDCommand {
+    LimelightSubsystem m_limelight;
+    DriveSubsystem m_drivetrain;
+    double inches;
+    public DriveToDistance(LimelightSubsystem limelight,DriveSubsystem driveTrain, double inches) {
+        super(
+            Constants.LimelightConstants.xPID, //reuse xpid from DriveTo
+            limelight::getY,
+            0, //placeholder setpoint until I can use conversion method (distanceToTargetHeight())
+            (output)->{driveTrain.drive(output, 0, 0, false);} //move back/forward to correct for error
+            );
+        m_limelight = limelight;   
+        m_drivetrain = driveTrain; 
+        getController().setTolerance(0.1);
+        addRequirements(m_limelight,m_drivetrain);
+        this.inches = inches;
+    }
+    @Override
+    public void initialize() {
+        super.initialize();
+        getController().setSetpoint(distanceToTargetHeight(inches)); //set the actual setpoint
+    }
+    @Override
+    public boolean isFinished() {
+        return getController().atSetpoint(); //finish if the controller is done
+    }
+    /**
+     * converts the given distance into the y-position the target needs to be at on-screen
+     * @param inches the given distance
+     * @return the y-coordinate the apriltag will be at when at that distance
+     */
+    private double distanceToTargetHeight(double inches) {
+        double targetHeight = (-m_limelight.get3dPose()[1]) + Constants.LimelightConstants.limelightHeight; //estimate target height (h2). 
+        double h1 = Constants.LimelightConstants.limelightHeight;
+        double a2 = Units.degreesToRadians(Constants.LimelightConstants.limelightAngleDegrees); //convert to radians
+        return Math.atan((targetHeight - h1) / inches) - a2; // I isolated a1 (the y pos needed) in the equation d = (h2-h1) / tan(a1+a2) to get this (equation from https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance)
+    }
+}
+/**
+ * runs {@link DriveToDistance} and {@link TurnTo} in the correct order to drive within a given distance of the main in-view apriltag
+ * @see DriveToDistance 
+ * @see TurnTo 
+ */
+public static class AlignAtDistance extends SequentialCommandGroup {
+    public AlignAtDistance(LimelightSubsystem m_limelight, DriveSubsystem m_drivetrain,double inches) {
+        addCommands(
+            new LimelightCommands.TurnTo(m_limelight,m_drivetrain,null), //0 out the x pos
+            new LimelightCommands.DriveToDistance(m_limelight, m_drivetrain, inches) //move to the correct distance
+        );
+        addRequirements(m_limelight,m_drivetrain);
+    }
+}
 }
