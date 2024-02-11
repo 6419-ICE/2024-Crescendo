@@ -1,4 +1,7 @@
 package frc.robot;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -9,15 +12,25 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class TrajectoryPaths {
-    
+    private static final HashMap<String,Trajectory> pathWeaverTrajectories = new HashMap<>();
+    static {
+        registerPathWeaverTrajectories(
+            "Test",
+            "FireAndNote"
+        );
+    }
     //private DriveSubsystem m_driveSubSystem; 
 
      // Create config for trajectory
+     
   static TrajectoryConfig config = new TrajectoryConfig(
     1,
     1)
@@ -43,7 +56,6 @@ static TrajectoryConfig configSlightlyFastForBackCharge = new TrajectoryConfig(
     0.4)
     // Add kinematics to ensure max speed is actually obeyed
     .setKinematics(DriveConstants.kDriveKinematics);
-
 
     public TrajectoryPaths()
     {}
@@ -459,5 +471,18 @@ public static Trajectory GoBackwardsToDropBlockFast () {
       
         return trajectory;
     }
-    
+    public static void registerPathWeaverTrajectories(String... names) {
+        for (String name : names) {
+            Trajectory t = new Trajectory();
+            try {
+                t = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve("pathweaver/PathWeaver/output/" + name + ".wpilib.json"));
+            } catch (IOException e) {
+                DriverStation.reportError("Error occured while registering path \"" + name + "\"",false);
+            }
+            pathWeaverTrajectories.put(name,t);
+        }
+    }
+    public static Trajectory getPathWeaverTrajectory(String name) {
+        return pathWeaverTrajectories.get(name);
+    }
 }

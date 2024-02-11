@@ -21,6 +21,7 @@ import frc.robot.commands.FireSingleMotorLauncherCommand;
 import frc.robot.commands.IntakeStateCommand;
 import frc.robot.commands.LimelightCommands;
 import frc.robot.commands.LimelightTestCommand;
+import frc.robot.commands.PathWeaverTestAuto;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
@@ -61,7 +62,12 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private static SendableChooser<Command> autoChooser;
+  private static SendableChooser<Boolean> alllianceChooser; 
   public RobotContainer() {
+    alllianceChooser = new SendableChooser<>();
+    alllianceChooser.setDefaultOption("None", null);
+    alllianceChooser.addOption("Red", true);
+    alllianceChooser.addOption("Blue", false);
     // Configure the button bindings
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("None", null);
@@ -73,12 +79,13 @@ public class RobotContainer {
     autoChooser.addOption("Single Motor Launch", new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
     autoChooser.addOption("align at distance",new LimelightCommands.AlignAtDistance(m_limeLightTurret, m_robotDrive, Units.metersToInches(2)));
     autoChooser.addOption("Move 2 meter", new DistanceTestCommand(m_robotDrive));
+    autoChooser.addOption("PathWeaver test", new PathWeaverTestAuto(m_robotDrive,m_launcher));
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
     //autoChooser.addOption("Auto Run Until Angle", new AutoDriveUntilAngle(m_robotDrive, boolSupplier));
     SmartDashboard.putData("Autonomous", autoChooser);
-    
+    SmartDashboard.putData("Alliance",alllianceChooser);
     //Shuffleboard.getTab("Gryo tab").add(m_robotDrive.m_gyro);
     configureButtonBindings();
     JoystickButton ArmRetractButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmRetract);
@@ -175,7 +182,14 @@ public static boolean GetGrabberCloseCubeButton() {
     // An ExampleCommand will run in autonomous
     return  autoChooser.getSelected();
   }
-
+  /**
+   * <p>true -> red alliance</p>
+   * <p>false -> blue alliance</p>
+   * <p>null -> no input</p>
+   */
+  public boolean isRedAlliance() {
+      return alllianceChooser.getSelected();
+  }
   
 
   public void disablePIDSubsystems() {
