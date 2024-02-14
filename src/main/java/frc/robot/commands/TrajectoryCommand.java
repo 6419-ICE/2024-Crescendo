@@ -1,9 +1,20 @@
 package frc.robot.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.function.BooleanSupplier;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.Constants.DriveConstants;
@@ -16,7 +27,6 @@ public class TrajectoryCommand extends SwerveControllerCommand{
 
     private DriveSubsystem m_driveSubSystem;
     private Trajectory m_Trajectory;
-
     private static ProfiledPIDController createThetaController() {
       var thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
@@ -58,10 +68,12 @@ public class TrajectoryCommand extends SwerveControllerCommand{
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("FrontLeft" + m_driveSubSystem.getEncoderPositions()[0]);
-    System.out.println("FrontRight" + m_driveSubSystem.getEncoderPositions()[1]);
-    System.out.println("BackLeft" + m_driveSubSystem.getEncoderPositions()[2]);
-    System.out.println("BackRight" + m_driveSubSystem.getEncoderPositions()[3]);
+    //System.out.printf("FrontLeft %f",m_driveSubSystem.getEncoderPositions()[0]);
+    SmartDashboard.putNumber("Front Left meters", Units.inchesToMeters(m_driveSubSystem.getEncoderPositions()[0]));
+    SmartDashboard.putNumber("Front Right meters", Units.inchesToMeters(m_driveSubSystem.getEncoderPositions()[1]));
+    SmartDashboard.putNumber("Back Left meters", Units.inchesToMeters(m_driveSubSystem.getEncoderPositions()[2]));
+    SmartDashboard.putNumber("Back Right meters", Units.inchesToMeters(m_driveSubSystem.getEncoderPositions()[3]));
+    SmartDashboard.updateValues();
     //SmartDashboard.putNumber("Current Pose", m_driveSubSystem.getPose().getX());
     //System.out.println("execute");
     super.execute();
@@ -79,5 +91,5 @@ public class TrajectoryCommand extends SwerveControllerCommand{
   public boolean isFinished() {
     return super.isFinished();
   }
-
 }
+
