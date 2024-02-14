@@ -17,7 +17,6 @@ public class AutoTestForPaths extends SequentialCommandGroup {
   /** Creates a new Autonomous Program. */
 
   public AutoTestForPaths(DriveSubsystem driveSubsystem) {
-  
     addCommands(
       
       Commands.sequence(

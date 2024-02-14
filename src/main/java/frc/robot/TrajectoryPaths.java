@@ -22,9 +22,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class TrajectoryPaths {
     private static final HashMap<String,Trajectory> pathWeaverTrajectories = new HashMap<>();
     static {
-        registerPathWeaverTrajectories(
+        registerPathWeaverTrajectories( 
             "Test",
-            "FireAndNote"
+            "FireAndNote",
+            "CenterFireAndNote"
         );
     }
     //private DriveSubsystem m_driveSubSystem; 
