@@ -25,7 +25,8 @@ public class TrajectoryPaths {
         registerPathWeaverTrajectories( 
             "Test",
             "FireAndNote",
-            "CenterFireAndNote"
+            "CenterFireAndNote",
+            "makeshift"
         );
     }
     //private DriveSubsystem m_driveSubSystem; 
