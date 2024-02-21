@@ -184,12 +184,23 @@ public final class Constants {
   }
   public static class IntakeConstants {
     public static int intakeMotorID = 24;
-    public static double intakeSpeed = -0.5;
-    public static double outtakeSpeed = 0.5;
+    public static double intakeSpeed = 0.5;
+    public static double outtakeSpeed = -0.25;
     public static int intakeButton = 4;
     public static int outtakeButton = 5;
-    //ProfiledPID
-    public static ProfiledPIDController pidController = new ProfiledPIDController(
+    //wrist
+    public static int wristMotorID = -1; //todo
+    public static ProfiledPIDController wristPIDController = new ProfiledPIDController(
+      0, //Kp
+      0, //Ki
+      0, //Kd
+      new TrapezoidProfile.Constraints(0, 0)
+    );
+  }
+
+  public static class ArmConstants {
+    public static final int motorID = 0; //todo 
+    public static final ProfiledPIDController controller = new ProfiledPIDController(
       0, //Kp
       0, //Ki
       0, //Kd

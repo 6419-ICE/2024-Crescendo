@@ -51,7 +51,7 @@ public class IntakeStateCommand extends Command {
             if (highAmpCount < 3) highAmpCount++; //this counter prevents the motor's startup current from triggering a freeze
             else setState(State.frozen); //todo make this retract arm too (Idealy the intake will be frozen when inside the robot, for now I manually freeze it here)
         }  else highAmpCount = 0; //reset counter when current returns to normal
-        if (intake != null && outtake != null && currentState != State.frozen) { //check if buttons have been fully binded before checking for input. Also checks if the intake is "frozen"
+        if (intake != null && outtake != null) { //check if buttons have been fully binded before checking for input. Also checks if the intake is "frozen"
             //set states based on input. If multiple buttons are pressed, intake takes priority
             if (intake.getAsBoolean()) setState(State.intake); 
             else if (outtake.getAsBoolean()) setState(State.outtake);
