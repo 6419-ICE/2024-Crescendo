@@ -29,7 +29,6 @@ public class LauncherVerticalAimerSubsystem extends PIDSubsystem {
 
     @Override
     protected double getMeasurement() {
-        // TODO Auto-generated method stub
         return motor.getEncoder().getPosition();
     }
     
