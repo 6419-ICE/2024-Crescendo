@@ -5,16 +5,28 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoDriveOutOfCommunity;
-import frc.robot.commands.SampleAutoOutofCommunity;
 import frc.robot.commands.AutoTestForPaths;
+import frc.robot.commands.DistanceTestCommand;
+import frc.robot.commands.FireLauncherCommand;
+import frc.robot.commands.FireSingleMotorLauncherCommand;
+import frc.robot.commands.IntakeStateCommand;
+import frc.robot.commands.LimelightCommands;
+import frc.robot.commands.LimelightTestCommand;
+import frc.robot.commands.PathWeaverTestAuto;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.SingleMotorLauncherSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -31,10 +43,14 @@ public class RobotContainer {
   
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final LimelightSubsystem m_limeLightChassis = new LimelightSubsystem(Constants.LimelightConstants.chassisHostName);
+  private final LimelightSubsystem m_limeLightTurret = new LimelightSubsystem(Constants.LimelightConstants.turretHostName);
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final LauncherSubsystem m_launcher = new LauncherSubsystem();
+  private final SingleMotorLauncherSubsystem m_singleMotorLauncher = new SingleMotorLauncherSubsystem();
   //private final Arm m_Arm = new Arm();
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  //XboxController m_outtakeController = new XboxController(OIConstants.)
+  static XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   static Joystick mechanismJoystick = new Joystick(Constants.ButtonBoxID);
   static JoystickButton coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
   static JoystickButton coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
@@ -46,26 +62,42 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private static SendableChooser<Command> autoChooser;
+  private static SendableChooser<Boolean> alllianceChooser; 
   public RobotContainer() {
+    alllianceChooser = new SendableChooser<>();
+    alllianceChooser.setDefaultOption("None", null);
+    alllianceChooser.addOption("Red", true);
+    alllianceChooser.addOption("Blue", false);
     // Configure the button bindings
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("None", null);
+    autoChooser.addOption("Limelight test",new LimelightTestCommand(m_limeLightChassis).alongWith(new LimelightTestCommand(m_limeLightTurret)));
     //autoChooser.addOption("Auto Drive Out Of Community", new AutoDriveOutOfCommunity(m_robotDrive));
     autoChooser.addOption("Auto Test For Paths", new AutoTestForPaths(m_robotDrive));
-    //autoChooser.addOption("Sample Auto Test Forward", new SampleAutoOutofCommunity(m_robotDrive));
+    autoChooser.addOption("Turn to", new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, null));
+    autoChooser.addOption("Launch", new FireLauncherCommand(m_launcher));
+    autoChooser.addOption("Single Motor Launch", new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
+    autoChooser.addOption("align at distance",new LimelightCommands.AlignAtDistance(m_limeLightTurret, m_robotDrive, Units.metersToInches(2)));
+    autoChooser.addOption("Move 2 meter", new DistanceTestCommand(m_robotDrive));
+    autoChooser.addOption("PathWeaver test", new PathWeaverTestAuto(m_robotDrive,m_launcher));
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
     //autoChooser.addOption("Auto Run Until Angle", new AutoDriveUntilAngle(m_robotDrive, boolSupplier));
     SmartDashboard.putData("Autonomous", autoChooser);
+    SmartDashboard.putData("Alliance",alllianceChooser);
     //Shuffleboard.getTab("Gryo tab").add(m_robotDrive.m_gyro);
-
     configureButtonBindings();
     JoystickButton ArmRetractButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmRetract);
-
-    // Configure default commands
-
-
+    JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
+    JoystickButton driveToLimelight = new JoystickButton(m_driverController, 2);
+    JoystickButton fireLauncher = new JoystickButton(m_driverController, 3);
+    JoystickButton intake = new JoystickButton(m_driverController, Constants.IntakeConstants.intakeButton);
+    JoystickButton outtake = new JoystickButton(m_driverController, Constants.IntakeConstants.outtakeButton);
+    fireLauncher.toggleOnTrue(new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
+    turnToLimelight.onTrue(new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, ()->0).withTimeout(3));
+    driveToLimelight.onTrue(new LimelightCommands.DriveTo(m_robotDrive, m_limeLightTurret, 1));
+    //Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -76,7 +108,13 @@ public class RobotContainer {
                 MathUtil.applyDeadband(-m_driverController.getRightX(), 0.06),
                 true),
             m_robotDrive));
+    m_limeLightChassis.setDefaultCommand(new LimelightTestCommand(m_limeLightChassis));
+    m_limeLightTurret.setDefaultCommand(new LimelightTestCommand(m_limeLightTurret));
+    IntakeStateCommand intakeStateCmd = new IntakeStateCommand(m_intake);
+    intakeStateCmd.setButtons(m_driverController::getLeftBumper,m_driverController::getRightBumper); //configure keybinds for intake
+    m_intake.setDefaultCommand(intakeStateCmd);
   }
+ 
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -89,19 +127,23 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     new JoystickButton(m_driverController, Button.kR1.value)
-    
         .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(), m_robotDrive));
+            () -> m_robotDrive.setX(),
+            m_robotDrive
+            ));
+            
             coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
             coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
   }
-
-  
+  public static boolean getIntakeButton() {
+    return m_driverController.getLeftBumper();
+  }
+  public static boolean getOuttakeButton() {
+    return m_driverController.getRightBumper();
+  }
   public static boolean GetConeFlipperUpButton() {
     return mechanismJoystick.getRawButton(Constants.GamePadConstants.ConeFlipperUp);
   }
-    
-  
   public static boolean GetConeFlipperDownButton() {
     return mechanismJoystick.getRawButton(Constants.GamePadConstants.ConeFlipperDown);
   }
@@ -140,7 +182,14 @@ public static boolean GetGrabberCloseCubeButton() {
     // An ExampleCommand will run in autonomous
     return  autoChooser.getSelected();
   }
-
+  /**
+   * <p>true -> red alliance</p>
+   * <p>false -> blue alliance</p>
+   * <p>null -> no input</p>
+   */
+  public boolean isRedAlliance() {
+      return alllianceChooser.getSelected();
+  }
   
 
   public void disablePIDSubsystems() {
