@@ -189,9 +189,9 @@ public final class Constants {
     public static int intakeButton = 4;
     public static int outtakeButton = 5;
     //wrist
-    public static int wristMotorID = -1; //todo
+    public static int wristMotorID = 11; //todo
     public static ProfiledPIDController wristPIDController = new ProfiledPIDController(
-      0, //Kp
+      0.01, //Kp
       0, //Ki
       0, //Kd
       new TrapezoidProfile.Constraints(0, 0)
@@ -199,12 +199,15 @@ public final class Constants {
   }
 
   public static class ArmConstants {
-    public static final int motorID = 0; //todo 
+    public static final int motorID = 11; //todo 
+    public static final double ticksPerRotation = 45;
+    public static final double ticksPerDegree = ticksPerRotation/360; //1024.25
     public static final ProfiledPIDController controller = new ProfiledPIDController(
-      0, //Kp
+      0.001, //Kp
       0, //Ki
       0, //Kd
-      new TrapezoidProfile.Constraints(0, 0)
+      new TrapezoidProfile.Constraints(10, 10)//TODO change these!
     );
+    public static final double controllerTolerance = 20;
   }
 }

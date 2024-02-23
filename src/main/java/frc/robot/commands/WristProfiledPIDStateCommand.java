@@ -12,7 +12,7 @@ import frc.robot.subsystems.WristProfiledPIDSubsystem;
 public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
     public enum Position {
         //positions
-        intake(0.0),
+        intake(180),
         load(0.0),
         amp(0.0),
         inside(0.0);
@@ -26,22 +26,31 @@ public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
         }
     }
     private Position targetPosition;
+    private WristProfiledPIDSubsystem m_wrist;
     public WristProfiledPIDStateCommand(WristProfiledPIDSubsystem m_wrist,Position initialPos) {
         super(
             m_wrist.getController(), //controller
             m_wrist::getMeasurement, //getMeasurement
-            initialPos::getPos, //setGoal
+            m_wrist::getGoal, //setGoal
             m_wrist::useOutput,
             m_wrist
         );
-            targetPosition = initialPos;
-            m_goal = ()-> new State(targetPosition.getPos(),0); //set goal to use targetPos instead of initial
+        this.m_wrist = m_wrist;
+        setTarget(initialPos);
     }
+    
     public void setTarget(Position target) {
         targetPosition = target;
+        m_wrist.setGoal(targetPosition.pos);
     }
     public Position getTarget() {
         return targetPosition;
+    }
+    public double getPosition() {
+        return m_wrist.getMeasurement();
+    }
+    public boolean atGoal() {
+        return m_wrist.atGoal();
     }
     
 }
