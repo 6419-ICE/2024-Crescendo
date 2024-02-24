@@ -45,7 +45,7 @@ public class ArmProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         return getController().getGoal().position;
     }
     public boolean atGoal() {
-        return getController().atSetpoint();
+        return getController().atGoal();
     }
     /**
      * 
