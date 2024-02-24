@@ -18,6 +18,7 @@ public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
     public WristProfiledPIDSubsystem() {
         super(Constants.IntakeConstants.wristPIDController);
         motor = new TalonFX(Constants.IntakeConstants.wristMotorID);
+        motor.setPosition(0);
         position = motor.getPosition();
         velocity = motor.getVelocity();
         getController().setTolerance(10);
@@ -29,15 +30,21 @@ public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
 
     @Override
     public double getMeasurement() {
-        return position.refresh().getValueAsDouble();
+        return getDegrees(position.refresh().getValueAsDouble());
     }
     public double getVelocity() {
         return velocity.getValueAsDouble();
+    }
+    public State getState() {
+        return new State(getMeasurement(),getVelocity());
     }
     public double getGoal() {
         return getController().getGoal().position;
     }
     public boolean atGoal() {
         return getController().atGoal();
+    }
+    public static double getDegrees(double ticks) {
+        return ticks/Constants.IntakeConstants.ticksPerDegree;
     }
 }

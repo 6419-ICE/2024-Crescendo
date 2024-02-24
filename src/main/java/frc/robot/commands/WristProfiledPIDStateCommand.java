@@ -38,7 +38,6 @@ public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
         this.m_wrist = m_wrist;
         setTarget(initialPos);
     }
-    
     public void setTarget(Position target) {
         targetPosition = target;
         m_wrist.setGoal(targetPosition.pos);
@@ -52,5 +51,5 @@ public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
     public boolean atGoal() {
         return m_wrist.atGoal();
     }
-    
+
 }

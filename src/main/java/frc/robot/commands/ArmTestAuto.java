@@ -14,19 +14,8 @@ import frc.robot.subsystems.WristProfiledPIDSubsystem;
 
 public class ArmTestAuto extends SequentialCommandGroup {
     public ArmTestAuto(WristProfiledPIDSubsystem m_wrist) {
-        WristProfiledPIDStateCommand command = new WristProfiledPIDStateCommand(m_wrist, Position.amp);
         addCommands(
-            Commands.parallel(
-                command,
-                new RunCommand(()->SmartDashboard.putNumber("Target", command.getTarget().getPos())),
-                new RunCommand(()->SmartDashboard.putNumber("Position", command.getPosition())),
-                new RunCommand(()->SmartDashboard.putBoolean("At Goal", command.atGoal())),
-                Commands.sequence(
-                    new InstantCommand(()->command.setTarget(Position.intake)),
-                    new WaitCommand(5).raceWith(new PrintCommand("waiting").repeatedly()),
-                    new InstantCommand(()->command.setTarget(Position.amp))
-                )
-            )
+            new WristProfiledPIDStateCommand(m_wrist,WristProfiledPIDStateCommand.Position.amp)
         );
     }
     

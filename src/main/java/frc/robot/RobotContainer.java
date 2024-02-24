@@ -201,8 +201,8 @@ public static boolean GetGrabberCloseCubeButton() {
   
 
   public void disablePIDSubsystems() {
-    //m_GrabberWithPID.disable();
-    //m_ArmWithPID.disable();
+    m_arm.disable();
+    m_wrist.disable();
   }
   //Comment To Test Merges
   /**
