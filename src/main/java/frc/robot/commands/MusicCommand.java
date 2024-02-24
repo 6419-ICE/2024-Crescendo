@@ -22,6 +22,7 @@ public class MusicCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         orchestra.stop();
+        orchestra.clearInstruments();
     }
     @Override
     public boolean isFinished() {

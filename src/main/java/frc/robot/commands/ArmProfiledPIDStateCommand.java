@@ -42,6 +42,11 @@ public class ArmProfiledPIDStateCommand extends ProfiledPIDCommand {
         this.m_arm = m_arm;
         setTarget(initialPos);
     }
+    @Override
+    public void initialize() {
+        setTarget(currentPos); //refresh subsystem
+        super.initialize();
+    }
     public void setTarget(Position target) {
         currentPos = target;
         m_arm.setGoal(currentPos.pos);

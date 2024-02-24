@@ -190,7 +190,7 @@ public final class Constants {
     public static int outtakeButton = 5;
     //wrist
     public static final int wristMotorID = 11; //todo
-    public static final double ticksPerRotation = 1; //todo
+    public static final double ticksPerRotation = 70; //todo
     public static final double ticksPerDegree = ticksPerRotation/360;
     public static ProfiledPIDController wristPIDController = new ProfiledPIDController(
       0.01, //Kp

@@ -13,8 +13,8 @@ public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
     public enum Position {
         //positions
         intake(180),
-        load(0.0),
-        amp(0.0),
+        load(270),
+        amp(90),
         inside(0.0);
         //class stuff DONT TOUCH!!!
         private final double pos;
@@ -36,7 +36,12 @@ public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
             m_wrist
         );
         this.m_wrist = m_wrist;
-        setTarget(initialPos);
+        targetPosition = initialPos;
+    }
+    @Override
+    public void initialize() {
+        setTarget(targetPosition); //refresh subsystem target position
+        super.initialize();
     }
     public void setTarget(Position target) {
         targetPosition = target;

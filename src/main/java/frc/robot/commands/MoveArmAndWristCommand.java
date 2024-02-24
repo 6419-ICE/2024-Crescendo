@@ -29,6 +29,7 @@ public class MoveArmAndWristCommand extends ParallelCommandGroup {
     }
     public MoveArmAndWristCommand(ArmProfiledPIDSubsystem m_arm, WristProfiledPIDSubsystem m_wrist, Position position) {
         addCommands(
+            
             new ArmProfiledPIDStateCommand(m_arm, position.getArmPos()).until(m_arm::atGoal),
             new WristProfiledPIDStateCommand(m_wrist, position.getWristPos()).until(m_wrist::atGoal)
         );
