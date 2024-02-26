@@ -16,17 +16,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants;
 
-public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
+public class WristProfiledPIDSubsystemThroughBore extends ProfiledPIDSubsystem {
     TalonFX motor;
+    Encoder encoder = new Encoder(0,1); //new
     StatusSignal<Double> position;
     StatusSignal<Double> velocity;
-    public WristProfiledPIDSubsystem() {
+    public WristProfiledPIDSubsystemThroughBore() {
         super(Constants.IntakeConstants.wristPIDController);
         motor = new TalonFX(Constants.IntakeConstants.wristMotorID);
         motor.setPosition(0);
         position = motor.getPosition();
         velocity = motor.getVelocity();
+        encoder.reset(); //new
+        encoder.setDistancePerPulse(1); //note: putting anything but 1 here seems to cause the encoder to only output 0
         //getController().setTolerance(Constants.IntakeConstants.tolerance);
+    }
+    @Override
+    public void periodic() {
+        super.periodic();
+        SmartDashboard.putNumber("Through-Bore", encoder.getDistance()/2048);
+        SmartDashboard.putNumber("Through-Bore Degrees?", (encoder.getDistance()/2048)*360);
     }
     @Override
     public void useOutput(double output, State setpoint) {
@@ -35,8 +44,8 @@ public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
     
     @Override
     public double getMeasurement() {
-        //return getDegrees(encoder.getDistance()); ///new
-        return getDegrees(position.refresh().getValueAsDouble());
+        return getDegrees(encoder.getDistance()); ///new
+        //return getDegrees(position.refresh().getValueAsDouble());
     }
     public double getVelocity() {
         return velocity.getValueAsDouble();
@@ -52,7 +61,7 @@ public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         return error == 0;
     }
     public static double getDegrees(double ticks) {
-        //return ticks/Constants.IntakeConstants.throughBorePulsesPerDegree;
-        return ticks/Constants.IntakeConstants.ticksPerDegree;
+        return ticks/Constants.IntakeConstants.throughBorePulsesPerDegree;
+        //return ticks/Constants.IntakeConstants.ticksPerDegree;
     }
 }

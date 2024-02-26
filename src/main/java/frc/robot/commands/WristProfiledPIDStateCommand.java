@@ -12,10 +12,10 @@ import frc.robot.subsystems.WristProfiledPIDSubsystem;
 public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
     public enum Position {
         //positions
-        intake(180),
-        load(270),
-        amp(90),
-        inside(0.0);
+        intake(180.0),
+        load(0.0),
+        amp(60.0),
+        inside(90.0); //30
         //class stuff DONT TOUCH!!!
         private final double pos;
         Position(double position) {
@@ -56,5 +56,6 @@ public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
     public boolean atGoal() {
         return m_wrist.atGoal();
     }
-
+    @Override
+    public void end(boolean interrupted) {}
 }

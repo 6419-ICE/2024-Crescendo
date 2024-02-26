@@ -6,32 +6,31 @@ import frc.robot.subsystems.ArmProfiledPIDSubsystem;
 import frc.robot.subsystems.WristProfiledPIDSubsystem;
 
 /**
- * command for controlling arm & wrist in auto using ArmProfiledPIDStateCommand & WristProfiledPIDStateCommand
+ * command for controlling arm & wrist in auto using ArmStateCommand & WristStateCommand
  */
 public class MoveArmAndWristCommand extends ParallelCommandGroup {
     public enum Position {
-        intake(WristProfiledPIDStateCommand.Position.intake,ArmProfiledPIDStateCommand.Position.intake),
-        load(WristProfiledPIDStateCommand.Position.load,ArmProfiledPIDStateCommand.Position.load),
-        amp(WristProfiledPIDStateCommand.Position.amp,ArmProfiledPIDStateCommand.Position.amp),
-        inside(WristProfiledPIDStateCommand.Position.inside,ArmProfiledPIDStateCommand.Position.inside);
-        private WristProfiledPIDStateCommand.Position wristPos;
-        private ArmProfiledPIDStateCommand.Position armPos;
-        Position(WristProfiledPIDStateCommand.Position wristPos, ArmProfiledPIDStateCommand.Position armPos) {
+        intake(WristStateCommand.Position.intake,ArmStateCommand.Position.intake),
+        load(WristStateCommand.Position.load,ArmStateCommand.Position.load),
+        amp(WristStateCommand.Position.amp,ArmStateCommand.Position.amp),
+        inside(WristStateCommand.Position.inside,ArmStateCommand.Position.inside);
+        private WristStateCommand.Position wristPos;
+        private ArmStateCommand.Position armPos;
+        Position(WristStateCommand.Position wristPos, ArmStateCommand.Position armPos) {
             this.wristPos = wristPos;
             this.armPos = armPos;
         }
-        public WristProfiledPIDStateCommand.Position getWristPos() {
+        public WristStateCommand.Position getWristPos() {
             return wristPos;
         }
-        public ArmProfiledPIDStateCommand.Position getArmPos() {
+        public ArmStateCommand.Position getArmPos() {
             return armPos;
         }
     }
     public MoveArmAndWristCommand(ArmProfiledPIDSubsystem m_arm, WristProfiledPIDSubsystem m_wrist, Position position) {
         addCommands(
-            
-            new ArmProfiledPIDStateCommand(m_arm, position.getArmPos()).until(m_arm::atGoal),
-            new WristProfiledPIDStateCommand(m_wrist, position.getWristPos()).until(m_wrist::atGoal)
+            new ArmStateCommand(m_arm, position.getArmPos()).until(m_arm::atGoal),
+            new WristStateCommand(m_wrist, position.getWristPos()).until(m_wrist::atGoal)
         );
         addRequirements(m_arm,m_wrist);
     }

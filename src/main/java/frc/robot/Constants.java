@@ -179,37 +179,50 @@ public final class Constants {
     public static final int rightMotorID = 13;
     public static final int singleMotorID = 13;
     public static final int stagingMotor = 0;
-    public static final int verticalAimMotor = 0;
-    public static final PIDController verticalAimPID = new PIDController(0, 0, 0);
+    public static final int verticalAimMotor = 10;
+
+    public static final double ticksPerRotation = 100 * (24/18);
+    public static final double ticksPerDegree = ticksPerRotation/360;
+    public static final ProfiledPIDController verticalAimPID = new ProfiledPIDController(
+      0.01, 
+      0, 
+      0,
+      new TrapezoidProfile.Constraints(10,10));
   }
   public static class IntakeConstants {
     public static int intakeMotorID = 24;
-    public static double intakeSpeed = 0.5;
-    public static double outtakeSpeed = -0.25;
+    public static double intakeSpeed = 0.75;
+    public static double outtakeSpeed = -0.5;
     public static int intakeButton = 4;
     public static int outtakeButton = 5;
     //wrist
-    public static final int wristMotorID = 11; //todo
-    public static final double ticksPerRotation = 70; //todo
+    public static final int wristMotorID = 12;
+    public static final double ticksPerRotation = 45 * (42/18);
     public static final double ticksPerDegree = ticksPerRotation/360;
+    //through-bore
+    public static final double throughBorePulsesPerRotation = 2048;
+    public static final double throughBorePulsesPerDegree = throughBorePulsesPerRotation/360;
     public static ProfiledPIDController wristPIDController = new ProfiledPIDController(
-      0.01, //Kp
+      0.04, //Kp
       0, //Ki
       0, //Kd
-      new TrapezoidProfile.Constraints(0, 0)
+      new TrapezoidProfile.Constraints(300, 300)
     );
+    public static final double minPower = 0.024;
+    public static final double tolerance = 2;
   }
 
   public static class ArmConstants {
     public static final int motorID = 11; //todo 
-    public static final double ticksPerRotation = 45;
+    public static final double ticksPerRotation = 45 * (48/12);
     public static final double ticksPerDegree = ticksPerRotation/360; //1024.25
     public static final ProfiledPIDController controller = new ProfiledPIDController(
-      0.001, //Kp
+      0.01, //Kp
       0, //Ki
       0, //Kd
-      new TrapezoidProfile.Constraints(10, 10)//TODO change these!
+      new TrapezoidProfile.Constraints(150, 150)//TODO change these!
     );
-    public static final double controllerTolerance = 20;
+    public static final double tolerance = 4;
+    public static final double minPower = 0.015;
   }
 }
