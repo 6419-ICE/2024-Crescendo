@@ -19,27 +19,31 @@ import frc.robot.Constants;
 public class WristProfiledPIDSubsystemThroughBore extends ProfiledPIDSubsystem {
     TalonFX motor;
     Encoder encoder = new Encoder(0,1); //new
-    StatusSignal<Double> position;
+    //double position;
     StatusSignal<Double> velocity;
     public WristProfiledPIDSubsystemThroughBore() {
         super(Constants.IntakeConstants.wristPIDController);
         motor = new TalonFX(Constants.IntakeConstants.wristMotorID);
-        motor.setPosition(0);
-        position = motor.getPosition();
-        velocity = motor.getVelocity();
+        //motor.setPosition(0);
+        //position = encoder.getDistance();
+        //velocity = motor.getVelocity();
         encoder.reset(); //new
-        encoder.setDistancePerPulse(1); //note: putting anything but 1 here seems to cause the encoder to only output 0
-        //getController().setTolerance(Constants.IntakeConstants.tolerance);
+        encoder.setDistancePerPulse(360.0/2048.0); //note: putting anything but 1 here seems to cause the encoder to only output 0
+        getController().setTolerance(Constants.IntakeConstants.tolerance);
     }
     @Override
     public void periodic() {
         super.periodic();
-        SmartDashboard.putNumber("Through-Bore", encoder.getDistance()/2048);
-        SmartDashboard.putNumber("Through-Bore Degrees?", (encoder.getDistance()/2048)*360);
+        //SmartDashboard.putNumber("Through-Bore degrees", encoder.getDistance());
+       // SmartDashboard.putNumber("Through-Bore rots", (encoder.getDistance()/360));
     }
     @Override
     public void useOutput(double output, State setpoint) {
-        motor.set(Math.max(Math.abs(output),Constants.IntakeConstants.minPower) * (output > 0 ? 1 : -1));
+        double minValue = output;//Math.max(Math.abs(output),Constants.IntakeConstants.minPower) * (output > 0 ? 1 : -1);
+        double maxValue = Math.min(Math.abs(minValue), 0.3) * (minValue > 0 ? 1 : -1);
+        double finalPower = maxValue;//atGoal() ? -Constants.IntakeConstants.minPower : maxValue;
+        motor.set(finalPower);
+        SmartDashboard.putNumber("Final power", finalPower);
     }
     
     @Override
@@ -61,7 +65,7 @@ public class WristProfiledPIDSubsystemThroughBore extends ProfiledPIDSubsystem {
         return error == 0;
     }
     public static double getDegrees(double ticks) {
-        return ticks/Constants.IntakeConstants.throughBorePulsesPerDegree;
+        return ticks;///Constants.IntakeConstants.throughBorePulsesPerDegree;
         //return ticks/Constants.IntakeConstants.ticksPerDegree;
     }
 }

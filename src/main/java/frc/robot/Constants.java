@@ -184,10 +184,10 @@ public final class Constants {
     public static final double ticksPerRotation = 100 * (24/18);
     public static final double ticksPerDegree = ticksPerRotation/360;
     public static final ProfiledPIDController verticalAimPID = new ProfiledPIDController(
-      0.01, 
+      0.02  , 
       0, 
       0,
-      new TrapezoidProfile.Constraints(10,10));
+      new TrapezoidProfile.Constraints(80,80));
   }
   public static class IntakeConstants {
     public static int intakeMotorID = 24;
@@ -203,10 +203,10 @@ public final class Constants {
     public static final double throughBorePulsesPerRotation = 2048;
     public static final double throughBorePulsesPerDegree = throughBorePulsesPerRotation/360;
     public static ProfiledPIDController wristPIDController = new ProfiledPIDController(
-      0.04, //Kp
+      0.04, //Kp 0.04
       0, //Ki
       0, //Kd
-      new TrapezoidProfile.Constraints(300, 300)
+      new TrapezoidProfile.Constraints(300, 300) //300,300
     );
     public static final double minPower = 0.024;
     public static final double tolerance = 2;

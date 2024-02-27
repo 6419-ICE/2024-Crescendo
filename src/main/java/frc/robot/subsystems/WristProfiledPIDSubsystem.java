@@ -26,6 +26,7 @@ public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         motor.setPosition(0);
         position = motor.getPosition();
         velocity = motor.getVelocity();
+        disable();
         //getController().setTolerance(Constants.IntakeConstants.tolerance);
     }
     @Override

@@ -18,7 +18,7 @@ public class LauncherSubsystem extends SubsystemBase {
     
     }
     public void setPower(double speed) {
-        rightMotor.set(speed);
+        rightMotor.set(-speed);
         leftMotor.set(-speed); //inversed didnt work, so I reverse the speed
     }
     public void setVelocity(double velo) {

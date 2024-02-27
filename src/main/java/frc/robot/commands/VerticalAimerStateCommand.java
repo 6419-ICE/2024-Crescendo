@@ -6,7 +6,7 @@ import frc.robot.subsystems.VerticalAimerProfiledPIDSubsystem;
 public class VerticalAimerStateCommand extends Command {
     public enum Position {
         load(0),
-        fire(30);
+        fire(-37);
         private double position;
         Position(double position) {
             this.position = position;
