@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.ArmProfiledPIDSubsystem;
@@ -42,5 +43,11 @@ public class ArmProfiledPIDStateCommand extends ProfiledPIDCommand {
     }
     public Position getTarget() {
         return targetPosition;
+    }
+    @Override
+    public void execute() {
+        //super.execute();
+        SmartDashboard.putNumber("Arm Encoder out", m_measurement.getAsDouble());
+        SmartDashboard.updateValues();
     }
 }

@@ -9,11 +9,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.AutoDriveOutOfCommunity;
+import frc.robot.commands.ArmProfiledPIDStateCommand;
 import frc.robot.commands.AutoTestForPaths;
 import frc.robot.commands.DistanceTestCommand;
 import frc.robot.commands.FireLauncherCommand;
@@ -22,7 +20,10 @@ import frc.robot.commands.IntakeStateCommand;
 import frc.robot.commands.LimelightCommands;
 import frc.robot.commands.LimelightTestCommand;
 import frc.robot.commands.PathWeaverTestAuto;
+import frc.robot.commands.ArmProfiledPIDStateCommand.Position;
+import frc.robot.subsystems.ArmProfiledPIDSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.HangerProfiledSybsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -48,6 +49,8 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private final SingleMotorLauncherSubsystem m_singleMotorLauncher = new SingleMotorLauncherSubsystem();
+  private final HangerProfiledSybsystem m_hanger = new HangerProfiledSybsystem();
+  private final ArmProfiledPIDSubsystem m_arm = new ArmProfiledPIDSubsystem();
   //private final Arm m_Arm = new Arm();
   // The driver's controller
   static XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -80,7 +83,8 @@ public class RobotContainer {
     autoChooser.addOption("align at distance",new LimelightCommands.AlignAtDistance(m_limeLightTurret, m_robotDrive, Units.metersToInches(2)));
     autoChooser.addOption("Move 2 meter", new DistanceTestCommand(m_robotDrive));
     autoChooser.addOption("PathWeaver test", new PathWeaverTestAuto(m_robotDrive,m_launcher));
-      // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
+    autoChooser.addOption("Arm Test", new ArmProfiledPIDStateCommand(m_arm, Position.inside)); 
+    // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
     //autoChooser.addOption("Auto Run Until Angle", new AutoDriveUntilAngle(m_robotDrive, boolSupplier));
@@ -94,6 +98,8 @@ public class RobotContainer {
     JoystickButton fireLauncher = new JoystickButton(m_driverController, 3);
     JoystickButton intake = new JoystickButton(m_driverController, Constants.IntakeConstants.intakeButton);
     JoystickButton outtake = new JoystickButton(m_driverController, Constants.IntakeConstants.outtakeButton);
+    JoystickButton hangTop = new JoystickButton(m_driverController, Constants.HangerConstants.hangTopButton);
+    JoystickButton hangBottom = new JoystickButton(m_driverController, Constants.HangerConstants.hangBottomButton);
     fireLauncher.toggleOnTrue(new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
     turnToLimelight.onTrue(new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, ()->0).withTimeout(3));
     driveToLimelight.onTrue(new LimelightCommands.DriveTo(m_robotDrive, m_limeLightTurret, 1));
@@ -135,6 +141,7 @@ public class RobotContainer {
             coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
             coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
   }
+
   public static boolean getIntakeButton() {
     return m_driverController.getLeftBumper();
   }

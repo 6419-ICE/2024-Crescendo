@@ -199,12 +199,27 @@ public final class Constants {
   }
 
   public static class ArmConstants {
-    public static final int motorID = 0; //todo 
+    public static final int motorID = 11; //todo 
     public static final ProfiledPIDController controller = new ProfiledPIDController(
       0, //Kp
       0, //Ki
       0, //Kd
       new TrapezoidProfile.Constraints(0, 0)
     );
+  }
+  
+  public static class HangerConstants {
+    public static final int motorID = 270000;
+    public static final ProfiledPIDController hangerController = new ProfiledPIDController(
+      0,
+      0,
+      0,
+      new TrapezoidProfile.Constraints(0, 0)
+    );
+    public static final double top = 0.0;
+    public static final double bottom = 0.0;
+    public static int hangTopButton = 0;
+    public static int hangBottomButton = 1;
+
   }
 }

@@ -28,13 +28,13 @@ public class AutoTestForPaths extends SequentialCommandGroup {
         new TurnToAngleProfiled(160, driveSubsystem).withTimeout(0.5),
         new TurnToAngleProfiled(0, driveSubsystem).withTimeout(3),
         new TrajectoryCommand(driveSubsystem, TrajectoryPaths.GoBackwardsToDropBlockFast())
-
+        //new TrajectoryCommand(driveSubsystem, TrajectoryPaths.getPathWeaverTrajectory("TrialPath"))
        // new WaitCommand(2),
        // new TurnToAngleProfiled(-179.999, driveSubsystem).withTimeout(3), 
        // new TrajectoryCommand(driveSubsystem, TrajectoryPaths.trajectoryAutoForwardTowardsSecondBlock()),
        // new TrajectoryCommand(driveSubsystem, TrajectoryPaths.trajectoryAutoForwardBackFromSecondBlock()),
-       // new TurnToAngleProfiled(0, driveSubsystem).withTimeout(3)
-        
+       // new TurnToAngleProfiled(0, driveSubsystem).withTimeout(3) 
+       
         )
     );
 
