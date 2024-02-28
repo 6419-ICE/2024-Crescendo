@@ -44,11 +44,6 @@ public class WristProfiledPIDSubsystemThroughBore extends FilteredProfiledPIDSub
         //getController().setTolerance(Constants.IntakeConstants.tolerance);
     }
     @Override
-    public void periodic() {
-        super.periodic();
-        Constants.IntakeConstants.wristPIDController.setPID(RobotContainer.kpEntry.getDouble(0.0),RobotContainer.kiEntry.getDouble(0.0),RobotContainer.kdEntry.getDouble(0.0));
-    }
-    @Override
     public void useOutput(double output, State setpoint) {
         //This limits the power to within the maxPower using Math.min().
         //The multiplier at the end converts the absolute value back to negative if needed
