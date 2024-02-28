@@ -200,10 +200,11 @@ public final class Constants {
     public static final double ticksPerRotation = 45 * (42/18);
     public static final double ticksPerDegree = ticksPerRotation/360;
     //through-bore
+    public static final double maxPower = 0.3;
     public static final double throughBorePulsesPerRotation = 2048;
     public static final double throughBorePulsesPerDegree = throughBorePulsesPerRotation/360;
     public static ProfiledPIDController wristPIDController = new ProfiledPIDController(
-      0.04, //Kp
+      0.008, //Kp
       0, //Ki
       0, //Kd
       new TrapezoidProfile.Constraints(300, 300)

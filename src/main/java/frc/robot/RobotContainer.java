@@ -4,14 +4,20 @@
 
 package frc.robot;
 
+import java.util.Map;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.ArmProfiledPIDStateCommand;
 import frc.robot.commands.ArmStateCommand;
@@ -19,6 +25,7 @@ import frc.robot.commands.ArmTestAuto;
 import frc.robot.commands.AutoDriveOutOfCommunity;
 import frc.robot.commands.AutoTestForPaths;
 import frc.robot.commands.DistanceTestCommand;
+import frc.robot.commands.EncoderTest;
 import frc.robot.commands.FireLauncherCommand;
 import frc.robot.commands.FireSingleMotorLauncherCommand;
 import frc.robot.commands.IntakeStateCommand;
@@ -36,6 +43,7 @@ import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SingleMotorLauncherSubsystem;
 import frc.robot.subsystems.VerticalAimerProfiledPIDSubsystem;
 import frc.robot.subsystems.WristProfiledPIDSubsystem;
+import frc.robot.subsystems.WristProfiledPIDSubsystemThroughBore;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -58,8 +66,9 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private final SingleMotorLauncherSubsystem m_singleMotorLauncher = new SingleMotorLauncherSubsystem();
-  private final ArmProfiledPIDSubsystem m_arm = new ArmProfiledPIDSubsystem();
-  private final WristProfiledPIDSubsystem m_wrist = new WristProfiledPIDSubsystem();
+ // private final ArmProfiledPIDSubsystem m_arm = new ArmProfiledPIDSubsystem();
+ // private final WristProfiledPIDSubsystem m_wrist = new WristProfiledPIDSubsystem();
+  private final WristProfiledPIDSubsystemThroughBore m_wristBore = new WristProfiledPIDSubsystemThroughBore();
   private final VerticalAimerProfiledPIDSubsystem m_aim = new VerticalAimerProfiledPIDSubsystem();
   //private final Arm m_Arm = new Arm();
   // The driver's controller
@@ -75,7 +84,10 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private static SendableChooser<Command> autoChooser;
-  private static SendableChooser<Boolean> alllianceChooser; 
+  private static SendableChooser<Boolean> alllianceChooser;
+  public static GenericEntry kpEntry;
+  public static GenericEntry kiEntry;
+  public static GenericEntry kdEntry;
   public RobotContainer() {
     alllianceChooser = new SendableChooser<>();
     alllianceChooser.setDefaultOption("None", null);
@@ -93,14 +105,30 @@ public class RobotContainer {
     autoChooser.addOption("align at distance",new LimelightCommands.AlignAtDistance(m_limeLightTurret, m_robotDrive, Units.metersToInches(2)));
     autoChooser.addOption("Move 2 meter", new DistanceTestCommand(m_robotDrive));
     autoChooser.addOption("PathWeaver test", new PathWeaverTestAuto(m_robotDrive,m_launcher));
-    autoChooser.addOption("Arm test", new ArmTestAuto(m_wrist,m_arm));
+   // autoChooser.addOption("Arm test", new ArmTestAuto(m_wrist,m_arm));
     autoChooser.addOption("launch test", new LauncherAngleTestAuto(m_aim));
+    autoChooser.addOption("encoder test", new EncoderTest(m_wristBore));
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
     //autoChooser.addOption("Auto Run Until Angle", new AutoDriveUntilAngle(m_robotDrive, boolSupplier));
     SmartDashboard.putData("Autonomous", autoChooser);
     SmartDashboard.putData("Alliance",alllianceChooser);
+    kpEntry = Shuffleboard.getTab("SmartDashboard")
+   .add("kp", 1)
+   .withWidget(BuiltInWidgets.kNumberSlider)
+   .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+   .getEntry();
+   kiEntry = Shuffleboard.getTab("SmartDashboard")
+   .add("ki", 1)
+   .withWidget(BuiltInWidgets.kNumberSlider)
+   .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+   .getEntry();
+   kdEntry = Shuffleboard.getTab("SmartDashboard")
+   .add("kd", 1)
+   .withWidget(BuiltInWidgets.kNumberSlider)
+   .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+   .getEntry();
     //Shuffleboard.getTab("Gryo tab").add(m_robotDrive.m_gyro);
     configureButtonBindings();
     JoystickButton armIntake = new JoystickButton(mechanismJoystick, 2);
@@ -133,11 +161,11 @@ public class RobotContainer {
     IntakeStateCommand intakeStateCmd = new IntakeStateCommand(m_intake);
     intakeStateCmd.setButtons(intakeIn,intakeOut); //configure keybinds for intake
     m_intake.setDefaultCommand(intakeStateCmd);
-    armIntake.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.intake));
-    armInside.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.inside));
-    armAmp.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.amp));
+    //armIntake.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.intake));
+   // armInside.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.inside));
+    //armAmp.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.amp));
   }
- 
+  
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -216,8 +244,8 @@ public static boolean GetGrabberCloseCubeButton() {
   
 
   public void disablePIDSubsystems() {
-    m_arm.disable();
-    m_wrist.disable();
+    //m_arm.disable();
+    //m_wrist.disable();
   }
   //Comment To Test Merges
   /**

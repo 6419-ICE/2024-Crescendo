@@ -2,9 +2,13 @@ package frc.robot.subsystems;
 
 
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import java.util.HashSet;
+import java.util.List;
+import java.util.function.Supplier; 
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.fasterxml.jackson.core.io.NumberInput;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -15,53 +19,56 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
-public class WristProfiledPIDSubsystemThroughBore extends ProfiledPIDSubsystem {
+public class WristProfiledPIDSubsystemThroughBore extends FilteredProfiledPIDSubsystem {
+
+    public static final State intake = new State(210,0);
+    public static final State inside = new State(80,0);
+    public static final State load = new State(0,0);
+    public static final State amp = new State(140,0);
     TalonFX motor;
     Encoder encoder = new Encoder(0,1); //new
-    StatusSignal<Double> position;
-    StatusSignal<Double> velocity;
     public WristProfiledPIDSubsystemThroughBore() {
-        super(Constants.IntakeConstants.wristPIDController);
+        super(Constants.IntakeConstants.wristPIDController,
+            intake,
+            inside,
+            load,
+            amp
+        );
         motor = new TalonFX(Constants.IntakeConstants.wristMotorID);
         motor.setPosition(0);
-        position = motor.getPosition();
-        velocity = motor.getVelocity();
         encoder.reset(); //new
-        encoder.setDistancePerPulse(1); //note: putting anything but 1 here seems to cause the encoder to only output 0
+        encoder.setDistancePerPulse(360.0/2048.0); //note: make sure to clarify the numbers are decimal values (float, double) or it will do integer division (bad)
+        setTolerance(Constants.IntakeConstants.tolerance);
         //getController().setTolerance(Constants.IntakeConstants.tolerance);
     }
     @Override
     public void periodic() {
         super.periodic();
-        SmartDashboard.putNumber("Through-Bore", encoder.getDistance()/2048);
-        SmartDashboard.putNumber("Through-Bore Degrees?", (encoder.getDistance()/2048)*360);
+        Constants.IntakeConstants.wristPIDController.setPID(RobotContainer.kpEntry.getDouble(0.0),RobotContainer.kiEntry.getDouble(0.0),RobotContainer.kdEntry.getDouble(0.0));
     }
     @Override
     public void useOutput(double output, State setpoint) {
-        motor.set(Math.max(Math.abs(output),Constants.IntakeConstants.minPower) * (output > 0 ? 1 : -1));
+        //This limits the power to within the maxPower using Math.min().
+        //The multiplier at the end converts the absolute value back to negative if needed
+        double cappedOutput = Math.min(Math.abs(output), Constants.IntakeConstants.maxPower) * (output > 0 ? 1 : -1); 
+        motor.set(cappedOutput); //set the motor to the new, capped speed
+        SmartDashboard.putNumber("motor out", cappedOutput);
     }
-    
     @Override
     public double getMeasurement() {
         return getDegrees(encoder.getDistance()); ///new
         //return getDegrees(position.refresh().getValueAsDouble());
     }
+    @Override
     public double getVelocity() {
-        return velocity.getValueAsDouble();
-    }
-    public State getState() {
-        return new State(getMeasurement(),getVelocity());
-    }
-    public double getGoal() {
-        return getController().getGoal().position;
-    }
-    public boolean atGoal() {
-        double error = MathUtil.applyDeadband(getGoal() - getMeasurement(),Constants.IntakeConstants.tolerance);
-        return error == 0;
+        return encoder.getRate(); //gets the velocity (automatically applies the distancePerPulse value too)
     }
     public static double getDegrees(double ticks) {
-        return ticks/Constants.IntakeConstants.throughBorePulsesPerDegree;
+        return ticks; //conversion done using setDistancePerPulse(), nothing needed here
+
+        //return ticks/Constants.IntakeConstants.throughBorePulsesPerDegree;
         //return ticks/Constants.IntakeConstants.ticksPerDegree;
     }
 }
