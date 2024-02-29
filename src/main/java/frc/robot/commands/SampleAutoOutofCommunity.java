@@ -26,7 +26,7 @@ public class SampleAutoOutofCommunity extends SequentialCommandGroup{
             ),
 
             Commands.sequence(
-              new IntakeStateCommand(m_intake, State.intake).withTimeout(2),
+              new IntakeStateCommand(m_intake, false,State.intake).withTimeout(2),
               new TrajectoryCommand(driveSubsystem, null),
               new FireLauncherCommand(m_launcher).withTimeout(2)
             )

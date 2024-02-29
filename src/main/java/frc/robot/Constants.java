@@ -217,11 +217,8 @@ public final class Constants {
 
   public static class ArmConstants {
     public static final int motorID = 11; //todo 
-<<<<<<< HEAD
-=======
     public static final double ticksPerRotation = 45 * (48/12);
     public static final double ticksPerDegree = ticksPerRotation/360; //1024.25
->>>>>>> origin/JackCorsoBranch
     public static final ProfiledPIDController controller = new ProfiledPIDController(
       0.01, //Kp
       0, //Ki
@@ -232,8 +229,11 @@ public final class Constants {
     public static final double minPower = 0.015;
   }
   
+
   public static class HangerConstants {
-    public static final int motorID = 270000;
+    public static final int hangerMotorID = 30;
+    public static final double hangerUpPower = 0.1;
+    public static final double hangerDownPower = -0.1;
     public static final ProfiledPIDController hangerController = new ProfiledPIDController(
       0,
       0,

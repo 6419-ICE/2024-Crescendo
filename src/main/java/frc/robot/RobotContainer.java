@@ -17,10 +17,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
-<<<<<<< HEAD
-import frc.robot.Constants.OIConstants;
-import frc.robot.commands.ArmProfiledPIDStateCommand;
-=======
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
@@ -29,29 +26,26 @@ import frc.robot.commands.ArmProfiledPIDStateCommand;
 import frc.robot.commands.ArmStateCommand;
 import frc.robot.commands.ArmTestAuto;
 import frc.robot.commands.AutoDriveOutOfCommunity;
->>>>>>> origin/JackCorsoBranch
 import frc.robot.commands.AutoTestForPaths;
 import frc.robot.commands.DistanceTestCommand;
 import frc.robot.commands.EncoderTest;
 import frc.robot.commands.FireLauncherCommand;
 import frc.robot.commands.FireSingleMotorLauncherCommand;
+import frc.robot.commands.HangerStateCommand;
 import frc.robot.commands.IntakeStateCommand;
 import frc.robot.commands.LauncherAngleTestAuto;
 import frc.robot.commands.LimelightCommands;
 import frc.robot.commands.LimelightTestCommand;
 import frc.robot.commands.MoveArmAndWristCommand;
 import frc.robot.commands.PathWeaverTestAuto;
-<<<<<<< HEAD
-import frc.robot.commands.ArmProfiledPIDStateCommand.Position;
-=======
 import frc.robot.commands.VerticalAimerStateCommand;
 import frc.robot.commands.WristStateCommand;
 import frc.robot.commands.ArmProfiledPIDStateCommand.Position;
 import frc.robot.commands.IntakeStateCommand.State;
->>>>>>> origin/JackCorsoBranch
 import frc.robot.subsystems.ArmProfiledPIDSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HangerProfiledSybsystem;
+import frc.robot.subsystems.HangerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -67,6 +61,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
 
@@ -85,23 +80,16 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private final SingleMotorLauncherSubsystem m_singleMotorLauncher = new SingleMotorLauncherSubsystem();
-<<<<<<< HEAD
-  private final HangerProfiledSybsystem m_hanger = new HangerProfiledSybsystem();
-  private final ArmProfiledPIDSubsystem m_arm = new ArmProfiledPIDSubsystem();
-=======
   private final ArmProfiledPIDSubsystem m_arm = new ArmProfiledPIDSubsystem();
   private final WristProfiledPIDSubsystem m_wrist = new WristProfiledPIDSubsystem();
   private final WristProfiledPIDSubsystemThroughBore m_wristBore = new WristProfiledPIDSubsystemThroughBore();
   private final VerticalAimerProfiledPIDSubsystem m_aim = new VerticalAimerProfiledPIDSubsystem();
->>>>>>> origin/JackCorsoBranch
+  private final HangerSubsystem m_hanger = new HangerSubsystem();
   //private final Arm m_Arm = new Arm();
   // The driver's controller
   static XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   static Joystick mechanismJoystick = new Joystick(Constants.ButtonBoxID);
-  static JoystickButton coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
-  static JoystickButton coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
-  static JoystickButton GrabberOpenButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.GrabberOpen);
-  static JoystickButton GrabberCloseButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.GrabberClose);
+
   //private HandleArm handleArm = new HandleArm(m_Arm);
   private static DutyCycleEncoder coneFlipperEncoder = new DutyCycleEncoder(Constants.FlipperEncoderID);
   /**
@@ -129,15 +117,10 @@ public class RobotContainer {
     autoChooser.addOption("align at distance",new LimelightCommands.AlignAtDistance(m_limeLightTurret, m_robotDrive, Units.metersToInches(2)));
     autoChooser.addOption("Move 2 meter", new DistanceTestCommand(m_robotDrive));
     autoChooser.addOption("PathWeaver test", new PathWeaverTestAuto(m_robotDrive,m_launcher));
-<<<<<<< HEAD
-    autoChooser.addOption("Arm Test", new ArmProfiledPIDStateCommand(m_arm, Position.inside)); 
-    // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
-=======
     autoChooser.addOption("Arm test", new ArmTestAuto(m_wrist,m_arm));
     autoChooser.addOption("launch test", new LauncherAngleTestAuto(m_aim));
     autoChooser.addOption("encoder test", new EncoderTest(m_wristBore));
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
->>>>>>> origin/JackCorsoBranch
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
     //autoChooser.addOption("Auto Run Until Angle", new AutoDriveUntilAngle(m_robotDrive, boolSupplier));
@@ -160,20 +143,7 @@ public class RobotContainer {
    .getEntry();
     //Shuffleboard.getTab("Gryo tab").add(m_robotDrive.m_gyro);
     configureButtonBindings();
-<<<<<<< HEAD
-    JoystickButton ArmRetractButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmRetract);
-    JoystickButton ArmExtendButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmExtend);
-    JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
-    JoystickButton driveToLimelight = new JoystickButton(m_driverController, 2);
-    JoystickButton fireLauncher = new JoystickButton(m_driverController, 3);
-    JoystickButton intake = new JoystickButton(m_driverController, Constants.IntakeConstants.intakeButton);
-    JoystickButton outtake = new JoystickButton(m_driverController, Constants.IntakeConstants.outtakeButton);
-    JoystickButton hangTop = new JoystickButton(m_driverController, Constants.HangerConstants.hangTopButton);
-    JoystickButton hangBottom = new JoystickButton(m_driverController, Constants.HangerConstants.hangBottomButton);
-    fireLauncher.toggleOnTrue(new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
-    turnToLimelight.onTrue(new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, ()->0).withTimeout(3));
-    driveToLimelight.onTrue(new LimelightCommands.DriveTo(m_robotDrive, m_limeLightTurret, 1));
-=======
+    //Joystick hanger = new Joystick(mechanismJoystick, )
     JoystickButton armIntake = new JoystickButton(mechanismJoystick, 2);
     JoystickButton armInside = new JoystickButton(mechanismJoystick, 1);
     JoystickButton armAmp = new JoystickButton(mechanismJoystick, 3);
@@ -183,6 +153,9 @@ public class RobotContainer {
     JoystickButton fireLauncher = new JoystickButton(mechanismJoystick, 6);
     JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
     JoystickButton driveToLimelight = new JoystickButton(m_driverController, 2);
+    //Trigger joystickUp = new Trigger(mechanismJoystick.axisGreaterThan(Joystick.AxisType.kY.value, 0, new EventLoop())); //check axis type
+    Trigger joystickDown = new Trigger(mechanismJoystick.axisLessThan(Joystick.AxisType.kY.value, 1, new EventLoop())); //check axis type
+    Trigger confirmHangButton = new Trigger(m_driverController::getAButton);
     //JoystickButton fireLauncher = new JoystickButton(m_driverController, 3);
     //JoystickButton intake = new JoystickButton(m_driverController, Constants.IntakeConstants.intakeButton);
     //JoystickButton outtake = new JoystickButton(m_driverController, Constants.IntakeConstants.outtakeButton);
@@ -194,7 +167,11 @@ public class RobotContainer {
     armAmp.onTrue(toAmp(m_wrist, m_arm, m_intake,m_aim));
     intakeUntilNote.onTrue(intakeUntilNote(m_wrist, m_arm, m_intake));
     fireLauncher.onTrue(fireLauncher(m_wrist, m_arm, m_intake, m_aim, m_launcher));
->>>>>>> origin/JackCorsoBranch
+    HangerStateCommand hangerStateCommand = new HangerStateCommand(m_hanger, HangerStateCommand.HangPosition.idle);
+    m_hanger.setDefaultCommand(hangerStateCommand);
+    joystickDown.and(confirmHangButton).onTrue(new InstantCommand(()->hangerStateCommand.setState(HangerStateCommand.HangPosition.down)));
+    //joystickDown.onTrue(new InstantCommand(()->hangerStateCommand.setState(HangerStateCommand.HangPosition.down)));
+    joystickDown.onFalse(new InstantCommand(()->hangerStateCommand.setState(HangerStateCommand.HangPosition.idle)));
     //Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -232,13 +209,8 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive
             ));
-            
-            coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
-            coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
   }
 
-<<<<<<< HEAD
-=======
   public static SequentialCommandGroup stowArm(WristProfiledPIDSubsystem m_wrist,ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake) {
     final MoveArmAndWristCommand.Position stowPosition = MoveArmAndWristCommand.Position.inside;
     return new SequentialCommandGroup(
@@ -299,26 +271,12 @@ public class RobotContainer {
       )
     );
   }
->>>>>>> origin/JackCorsoBranch
   public static boolean getIntakeButton() {
     return m_driverController.getLeftBumper();
   }
   public static boolean getOuttakeButton() {
     return m_driverController.getRightBumper();
   }
-  public static boolean GetConeFlipperUpButton() {
-    return mechanismJoystick.getRawButton(Constants.GamePadConstants.ConeFlipperUp);
-  }
-  public static boolean GetConeFlipperDownButton() {
-    return mechanismJoystick.getRawButton(Constants.GamePadConstants.ConeFlipperDown);
-  }
- public static boolean GetGrabberCloseButton() {
-  return mechanismJoystick.getRawButton(Constants.GamePadConstants.GrabberClose);
-  
- } 
- public static boolean GetGrabberOpenButton() {
-  return mechanismJoystick.getRawButton(Constants.GamePadConstants.GrabberOpen);
- } 
 
  public static boolean GetCubeInButton() {
   return mechanismJoystick.getRawButton(1);
@@ -339,9 +297,6 @@ public class RobotContainer {
  public static DutyCycleEncoder GetFlipperEncoder() {
   return coneFlipperEncoder;
 }
-public static boolean GetGrabberCloseCubeButton() {
-  return mechanismJoystick.getRawButton(Constants.GamePadConstants.GrabberCloseCube);
- } 
 
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous

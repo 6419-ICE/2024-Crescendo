@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants;
 
+@Deprecated
 public class HangerProfiledSybsystem extends ProfiledPIDSubsystem{
 
     CANSparkMax m_hangerMotor;
