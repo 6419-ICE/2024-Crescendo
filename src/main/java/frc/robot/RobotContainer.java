@@ -204,13 +204,14 @@ public class RobotContainer {
   }
 
   public static SequentialCommandGroup stowArm(WristProfiledPIDSubsystem m_wrist,ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake) {
+    final MoveArmAndWristCommand.Position stowPosition = MoveArmAndWristCommand.Position.inside;
     return new SequentialCommandGroup(
       new ConditionalCommand(
-        new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.load),
+        new MoveArmAndWristCommand(m_arm, m_wrist, stowPosition),
         Commands.sequence(
           new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.inside),
           new IntakeStateCommand(m_intake, false,State.intake).withTimeout(2),
-          new MoveArmAndWristCommand(m_arm,m_wrist,MoveArmAndWristCommand.Position.load)
+          new MoveArmAndWristCommand(m_arm,m_wrist,stowPosition)
         ),
         ()-> m_wrist.getGoal()==WristStateCommand.Position.intake.getPos()
       )

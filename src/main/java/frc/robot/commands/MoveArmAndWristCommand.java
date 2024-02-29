@@ -33,8 +33,8 @@ public class MoveArmAndWristCommand extends SequentialCommandGroup {
         addCommands(
             new WristStateCommand(m_wrist, WristStateCommand.Position.inside).until(m_wrist::atGoal).onlyIf(()->m_arm.getGoal() != position.armPos.getPos()),
             new ArmStateCommand(m_arm, position.getArmPos()).until(m_arm::atGoal),
-            new WristStateCommand(m_wrist, position.getWristPos()).until(m_wrist::atGoal),
-            new InstantCommand(m_wrist::disable).onlyIf(()->position == Position.intake)
+            new WristStateCommand(m_wrist, position.getWristPos()).until(m_wrist::atGoal)//,
+           // new InstantCommand(m_wrist::disable).onlyIf(()->position == Position.intake)
         );
         addRequirements(m_arm,m_wrist);
     }
