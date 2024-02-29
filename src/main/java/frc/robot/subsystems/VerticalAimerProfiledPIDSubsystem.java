@@ -45,4 +45,7 @@ public class VerticalAimerProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         super.periodic();
         SmartDashboard.putNumber("Launcher Angle",getMeasurement());
     }
+    public void resetPosition() {
+        motor.getEncoder().setPosition(0);
+    }
 }

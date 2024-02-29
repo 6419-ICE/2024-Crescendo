@@ -15,6 +15,7 @@ public class MoveArmAndWristCommand extends SequentialCommandGroup {
         intake(WristStateCommand.Position.intake,ArmStateCommand.Position.intake),
         load(WristStateCommand.Position.load,ArmStateCommand.Position.load),
         amp(WristStateCommand.Position.amp,ArmStateCommand.Position.amp),
+        balance(WristStateCommand.Position.balance,ArmStateCommand.Position.balance),
         inside(WristStateCommand.Position.inside,ArmStateCommand.Position.inside);
         private WristStateCommand.Position wristPos;
         private ArmStateCommand.Position armPos;

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
@@ -54,10 +55,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
 
@@ -84,6 +87,8 @@ public class RobotContainer {
   // The driver's controller
   static XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   static Joystick mechanismJoystick = new Joystick(Constants.ButtonBoxID);
+  static XboxController m_mechanismLogitech = new XboxController(2);//temp
+
   static JoystickButton coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
   static JoystickButton coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
   static JoystickButton GrabberOpenButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.GrabberOpen);
@@ -148,8 +153,24 @@ public class RobotContainer {
     JoystickButton intakeIn = new JoystickButton(mechanismJoystick, 8);
     JoystickButton intakeOut = new JoystickButton(mechanismJoystick, 5);
     JoystickButton fireLauncher = new JoystickButton(mechanismJoystick, 6);
-    JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
-    JoystickButton driveToLimelight = new JoystickButton(m_driverController, 2);
+    JoystickButton tempBalancePos = new JoystickButton(mechanismJoystick, 9);
+    //logitech
+    JoystickButton armIntakeLogitech = new JoystickButton(m_mechanismLogitech, XboxController.Button.kX.value); //x
+    JoystickButton armInsideLogitech = new JoystickButton(m_mechanismLogitech, XboxController.Button.kB.value);//b
+    JoystickButton armAmpLogitech = new JoystickButton(m_mechanismLogitech, XboxController.Button.kY.value);//y
+    JoystickButton intakeUntilNoteLogitech = new JoystickButton(m_mechanismLogitech, XboxController.Button.kLeftBumper.value);//left bumper
+    JoystickButton intakeInLogitech = new JoystickButton(m_mechanismLogitech, XboxController.Button.kA.value);//a
+    JoystickButton intakeOutLogitech = new JoystickButton(m_mechanismLogitech, XboxController.Button.kRightBumper.value);//right bumper
+    Trigger leftTriggerLogitech = new Trigger(m_mechanismLogitech.axisGreaterThan(XboxController.Axis.kLeftTrigger.value,0.5,new EventLoop())); //left trigger
+    Trigger rightTriggerLogitech = new Trigger(m_mechanismLogitech.axisGreaterThan(XboxController.Axis.kRightTrigger.value,0.5,new EventLoop())); //left trigger
+    Trigger fireLauncherLogitech = new JoystickButton(m_mechanismLogitech, XboxController.Button.kLeftStick.value);
+    JoystickButton tempBalancePosLogitech = new JoystickButton(m_mechanismLogitech, XboxController.Button.kBack.value);// (temp) back
+    //JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
+    //JoystickButton driveToLimelight = new JoystickButton(m_driverController, 2);
+    //JoystickButton toggleLaunchAngle = new JoystickButton(mechanismJoystick, 7); driver controller
+    //driver
+    Trigger leftTrigger = new Trigger(()->MathUtil.applyDeadband(m_driverController.getLeftTriggerAxis(),0.1) > 0);
+    Trigger rightTrigger = new Trigger(()->MathUtil.applyDeadband(m_driverController.getRightTriggerAxis(),0.1) > 0);
     //JoystickButton fireLauncher = new JoystickButton(m_driverController, 3);
     //JoystickButton intake = new JoystickButton(m_driverController, Constants.IntakeConstants.intakeButton);
     //JoystickButton outtake = new JoystickButton(m_driverController, Constants.IntakeConstants.outtakeButton);
@@ -161,7 +182,18 @@ public class RobotContainer {
     armAmp.onTrue(toAmp(m_wrist, m_arm, m_intake,m_aim));
     intakeUntilNote.onTrue(intakeUntilNote(m_wrist, m_arm, m_intake));
     fireLauncher.onTrue(fireLauncher(m_wrist, m_arm, m_intake, m_aim, m_launcher));
-    //Configure default commands
+    tempBalancePos.onTrue(toBalancePositions(m_wrist, m_arm, m_aim));
+    //logitech
+    armInsideLogitech.onTrue(stowArm(m_wrist, m_arm, m_intake).until(armAmpLogitech.or(armIntakeLogitech)));
+    armIntakeLogitech.onTrue(toIntake(m_wrist, m_arm, m_intake).until(armAmpLogitech.or(armInsideLogitech)));
+    armAmpLogitech.onTrue(toAmp(m_wrist, m_arm, m_intake,m_aim).until(armInsideLogitech.or(armIntakeLogitech)));
+    intakeUntilNoteLogitech.onTrue(intakeUntilNote(m_wrist, m_arm, m_intake));
+    fireLauncherLogitech.onTrue(fireLauncher(m_wrist, m_arm, m_intake, m_aim, m_launcher));
+    tempBalancePosLogitech.onTrue(toBalancePositions(m_wrist, m_arm, m_aim));
+    //Configure default commands 
+    //driver
+    leftTrigger.onTrue(new VerticalAimerStateCommand(m_aim, VerticalAimerStateCommand.Position.down).until(rightTrigger).withTimeout(4));
+    rightTrigger.onTrue(new VerticalAimerStateCommand(m_aim, VerticalAimerStateCommand.Position.load).until(leftTrigger).withTimeout(4).andThen(new InstantCommand(m_aim::resetPosition)));
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -172,10 +204,14 @@ public class RobotContainer {
                 MathUtil.applyDeadband(-m_driverController.getRightX(), 0.06),
                 true),
             m_robotDrive));
-    m_limeLightChassis.setDefaultCommand(new LimelightTestCommand(m_limeLightChassis));
-    m_limeLightTurret.setDefaultCommand(new LimelightTestCommand(m_limeLightTurret));
+   // m_limeLightChassis.setDefaultCommand(new LimelightTestCommand(m_limeLightChassis));
+   // m_limeLightTurret.setDefaultCommand(new LimelightTestCommand(m_limeLightTurret));
     IntakeStateCommand intakeStateCmd = new IntakeStateCommand(m_intake,false);
-    intakeStateCmd.setButtons(intakeIn,intakeOut); //configure keybinds for intake
+    if (mechanismJoystick.isConnected()) {
+      intakeStateCmd.setButtons(intakeIn,intakeOut); //configure keybinds for intake
+    } else {
+      intakeStateCmd.setButtons(intakeInLogitech, intakeOutLogitech);
+    }
     m_intake.setDefaultCommand(intakeStateCmd);
     //armIntake.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.intake));
    // armInside.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.inside));
@@ -202,15 +238,15 @@ public class RobotContainer {
             coneFlipperUpButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperUp);
             coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
   }
-
-  public static SequentialCommandGroup stowArm(WristProfiledPIDSubsystem m_wrist,ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake) {
+  /**button 1*/
+  public static Command stowArm(WristProfiledPIDSubsystem m_wrist,ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake) {
     final MoveArmAndWristCommand.Position stowPosition = MoveArmAndWristCommand.Position.inside;
     return new SequentialCommandGroup(
       new ConditionalCommand(
         new MoveArmAndWristCommand(m_arm, m_wrist, stowPosition),
         Commands.sequence(
           new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.inside),
-          new IntakeStateCommand(m_intake, false,State.intake).withTimeout(2),
+          //new IntakeStateCommand(m_intake, false,State.intake).withTimeout(2),
           new MoveArmAndWristCommand(m_arm,m_wrist,stowPosition)
         ),
         ()-> m_wrist.getGoal()==WristStateCommand.Position.intake.getPos()
@@ -218,7 +254,9 @@ public class RobotContainer {
      
     );
   }
-  public static SequentialCommandGroup toIntake(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm,IntakeSubsystem m_intake) {
+  
+  /**button 2*/
+  public static Command toIntake(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm,IntakeSubsystem m_intake) {
     return new SequentialCommandGroup(
       // stowArm(m_wrist, m_arm, m_intake).onlyIf(()->
       //   m_wrist.getGoal() != WristStateCommand.Position.inside.getPos() && //check if its not inside
@@ -228,7 +266,9 @@ public class RobotContainer {
       new InstantCommand(()->m_intake.setHasNote(false))
     );
   }
-  public static SequentialCommandGroup toAmp(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm,IntakeSubsystem m_intake,VerticalAimerProfiledPIDSubsystem m_aim) {
+  
+  /**button 3*/
+  public static Command toAmp(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm,IntakeSubsystem m_intake,VerticalAimerProfiledPIDSubsystem m_aim) {
     return new SequentialCommandGroup(
       // stowArm(m_wrist, m_arm, m_intake).onlyIf(()->
       //   m_wrist.getGoal() != WristStateCommand.Position.inside.getPos() && //check if its not inside
@@ -241,16 +281,17 @@ public class RobotContainer {
       new InstantCommand(()->m_intake.setHasNote(false))
     );
   }
-  public static SequentialCommandGroup intakeUntilNote(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake) {
+  
+  /**button 4*/
+  public static Command intakeUntilNote(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake) {
     return new SequentialCommandGroup(
       new IntakeStateCommand(m_intake,true,State.intake).until(m_intake::hasNote),
       stowArm(m_wrist, m_arm, m_intake)
-    ).onlyIf(()->m_wrist.getGoal() == WristStateCommand.Position.intake.getPos()).andThen(Commands.none());
+    ).onlyIf(()->m_wrist.getGoal() == WristStateCommand.Position.intake.getPos());
   }
-  // public static SequentialCommandGroup alignForLaunch(DriveSubsystem m_drive, LimelightSubsystem m_limelight) {
-  //   return new SequentialCommandGroup(new LimelightCommands.AlignAtDistance(m_limelight, m_drive, 0));
-  // }
-  public static SequentialCommandGroup fireLauncher(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake, VerticalAimerProfiledPIDSubsystem m_aim,LauncherSubsystem m_launch) {
+  
+  /**button 6*/
+  public static Command fireLauncher(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake, VerticalAimerProfiledPIDSubsystem m_aim,LauncherSubsystem m_launch) {
     return new SequentialCommandGroup(
      // stowArm(m_wrist, m_arm, m_intake),
       new VerticalAimerStateCommand(m_aim,VerticalAimerStateCommand.Position.fire).until(m_aim::atGoal),
@@ -258,11 +299,33 @@ public class RobotContainer {
         new FireLauncherCommand(m_launch),
         Commands.sequence(
           new WaitCommand(2.5),
-          new IntakeStateCommand(m_intake,false,IntakeStateCommand.State.outtake).withTimeout(3.5)
+          new IntakeStateCommand(m_intake,false,IntakeStateCommand.State.outtake).withTimeout(2.5)
         )
       )
     );
   }
+  
+  /**button 7
+   * @deprecated transferred to the triggers on driver controller
+  */
+  @Deprecated
+  public static Command toggleLauncherAngle(VerticalAimerProfiledPIDSubsystem m_aim) {
+    return switch(VerticalAimerStateCommand.Position.toPosition(m_aim.getGoal())) {
+        case load -> new VerticalAimerStateCommand(m_aim, VerticalAimerStateCommand.Position.down).until(m_aim::atGoal);
+        case down -> new VerticalAimerStateCommand(m_aim, VerticalAimerStateCommand.Position.load).until(m_aim::atGoal);
+        default -> Commands.none(); //do nothing if null or fire pos
+      };
+  }
+  /**button 9 TEMP*/
+  public static Command toBalancePositions(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm, VerticalAimerProfiledPIDSubsystem m_aim) {
+    return new ParallelCommandGroup(
+      new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.balance),
+      new VerticalAimerStateCommand(m_aim, VerticalAimerStateCommand.Position.down).until(m_aim::atGoal)
+    );
+  }
+  // public static SequentialCommandGroup alignForLaunch(DriveSubsystem m_drive, LimelightSubsystem m_limelight) { BROKEN??? Jitters during normal driving when using this
+  //   return new SequentialCommandGroup(new LimelightCommands.AlignAtDistance(m_limelight, m_drive, 0));
+  // }
   public static boolean getIntakeButton() {
     return m_driverController.getLeftBumper();
   }

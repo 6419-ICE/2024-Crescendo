@@ -196,7 +196,7 @@ public final class Constants {
     public static int outtakeButton = 5;
     //wrist
     public static final int wristMotorID = 12;
-    public static final double ticksPerRotation = 45 * (42/18);
+    public static final double ticksPerRotation = 45 * (42/24);
     public static final double ticksPerDegree = ticksPerRotation/360;
     //through-bore
     public static final double maxPower = 0.3;
