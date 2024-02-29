@@ -12,10 +12,10 @@ import frc.robot.subsystems.WristProfiledPIDSubsystem;
 public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
     public enum Position {
         //positions
-        intake(0.0),
+        intake(180.0),
         load(0.0),
-        amp(0.0),
-        inside(0.0);
+        amp(60.0),
+        inside(90.0); //30
         //class stuff DONT TOUCH!!!
         private final double pos;
         Position(double position) {
@@ -26,22 +26,36 @@ public class WristProfiledPIDStateCommand extends ProfiledPIDCommand{
         }
     }
     private Position targetPosition;
+    private WristProfiledPIDSubsystem m_wrist;
     public WristProfiledPIDStateCommand(WristProfiledPIDSubsystem m_wrist,Position initialPos) {
         super(
             m_wrist.getController(), //controller
             m_wrist::getMeasurement, //getMeasurement
-            initialPos::getPos, //setGoal
+            m_wrist::getGoal, //setGoal
             m_wrist::useOutput,
             m_wrist
         );
-            targetPosition = initialPos;
-            m_goal = ()-> new State(targetPosition.getPos(),0); //set goal to use targetPos instead of initial
+        this.m_wrist = m_wrist;
+        targetPosition = initialPos;
+    }
+    @Override
+    public void initialize() {
+        setTarget(targetPosition); //refresh subsystem target position
+        super.initialize();
     }
     public void setTarget(Position target) {
         targetPosition = target;
+        m_wrist.setGoal(targetPosition.pos);
     }
     public Position getTarget() {
         return targetPosition;
     }
-    
+    public double getPosition() {
+        return m_wrist.getMeasurement();
+    }
+    public boolean atGoal() {
+        return m_wrist.atGoal();
+    }
+    @Override
+    public void end(boolean interrupted) {}
 }

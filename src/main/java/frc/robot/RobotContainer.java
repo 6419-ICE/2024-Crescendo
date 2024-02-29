@@ -4,23 +4,51 @@
 
 package frc.robot;
 
+import java.util.Map;
+import java.util.function.BooleanSupplier;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
+<<<<<<< HEAD
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.ArmProfiledPIDStateCommand;
+=======
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
+import frc.robot.Constants.OIConstants;
+import frc.robot.commands.ArmProfiledPIDStateCommand;
+import frc.robot.commands.ArmStateCommand;
+import frc.robot.commands.ArmTestAuto;
+import frc.robot.commands.AutoDriveOutOfCommunity;
+>>>>>>> origin/JackCorsoBranch
 import frc.robot.commands.AutoTestForPaths;
 import frc.robot.commands.DistanceTestCommand;
+import frc.robot.commands.EncoderTest;
 import frc.robot.commands.FireLauncherCommand;
 import frc.robot.commands.FireSingleMotorLauncherCommand;
 import frc.robot.commands.IntakeStateCommand;
+import frc.robot.commands.LauncherAngleTestAuto;
 import frc.robot.commands.LimelightCommands;
 import frc.robot.commands.LimelightTestCommand;
+import frc.robot.commands.MoveArmAndWristCommand;
 import frc.robot.commands.PathWeaverTestAuto;
+<<<<<<< HEAD
 import frc.robot.commands.ArmProfiledPIDStateCommand.Position;
+=======
+import frc.robot.commands.VerticalAimerStateCommand;
+import frc.robot.commands.WristStateCommand;
+import frc.robot.commands.ArmProfiledPIDStateCommand.Position;
+import frc.robot.commands.IntakeStateCommand.State;
+>>>>>>> origin/JackCorsoBranch
 import frc.robot.subsystems.ArmProfiledPIDSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HangerProfiledSybsystem;
@@ -28,8 +56,16 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SingleMotorLauncherSubsystem;
+import frc.robot.subsystems.VerticalAimerProfiledPIDSubsystem;
+import frc.robot.subsystems.WristProfiledPIDSubsystem;
+import frc.robot.subsystems.WristProfiledPIDSubsystemThroughBore;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
@@ -49,8 +85,15 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private final SingleMotorLauncherSubsystem m_singleMotorLauncher = new SingleMotorLauncherSubsystem();
+<<<<<<< HEAD
   private final HangerProfiledSybsystem m_hanger = new HangerProfiledSybsystem();
   private final ArmProfiledPIDSubsystem m_arm = new ArmProfiledPIDSubsystem();
+=======
+  private final ArmProfiledPIDSubsystem m_arm = new ArmProfiledPIDSubsystem();
+  private final WristProfiledPIDSubsystem m_wrist = new WristProfiledPIDSubsystem();
+  private final WristProfiledPIDSubsystemThroughBore m_wristBore = new WristProfiledPIDSubsystemThroughBore();
+  private final VerticalAimerProfiledPIDSubsystem m_aim = new VerticalAimerProfiledPIDSubsystem();
+>>>>>>> origin/JackCorsoBranch
   //private final Arm m_Arm = new Arm();
   // The driver's controller
   static XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -65,7 +108,10 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private static SendableChooser<Command> autoChooser;
-  private static SendableChooser<Boolean> alllianceChooser; 
+  private static SendableChooser<Boolean> alllianceChooser;
+  public static GenericEntry kpEntry;
+  public static GenericEntry kiEntry;
+  public static GenericEntry kdEntry;
   public RobotContainer() {
     alllianceChooser = new SendableChooser<>();
     alllianceChooser.setDefaultOption("None", null);
@@ -83,15 +129,38 @@ public class RobotContainer {
     autoChooser.addOption("align at distance",new LimelightCommands.AlignAtDistance(m_limeLightTurret, m_robotDrive, Units.metersToInches(2)));
     autoChooser.addOption("Move 2 meter", new DistanceTestCommand(m_robotDrive));
     autoChooser.addOption("PathWeaver test", new PathWeaverTestAuto(m_robotDrive,m_launcher));
+<<<<<<< HEAD
     autoChooser.addOption("Arm Test", new ArmProfiledPIDStateCommand(m_arm, Position.inside)); 
     // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
+=======
+    autoChooser.addOption("Arm test", new ArmTestAuto(m_wrist,m_arm));
+    autoChooser.addOption("launch test", new LauncherAngleTestAuto(m_aim));
+    autoChooser.addOption("encoder test", new EncoderTest(m_wristBore));
+      // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
+>>>>>>> origin/JackCorsoBranch
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));
     //autoChooser.addOption("Auto Run Until Angle", new AutoDriveUntilAngle(m_robotDrive, boolSupplier));
     SmartDashboard.putData("Autonomous", autoChooser);
     SmartDashboard.putData("Alliance",alllianceChooser);
+    kpEntry = Shuffleboard.getTab("SmartDashboard")
+   .add("kp", 1)
+   .withWidget(BuiltInWidgets.kNumberSlider)
+   .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+   .getEntry();
+   kiEntry = Shuffleboard.getTab("SmartDashboard")
+   .add("ki", 1)
+   .withWidget(BuiltInWidgets.kNumberSlider)
+   .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+   .getEntry();
+   kdEntry =  Shuffleboard.getTab("SmartDashboard")
+   .add("kd", 1)
+   .withWidget(BuiltInWidgets.kNumberSlider)
+   .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
+   .getEntry();
     //Shuffleboard.getTab("Gryo tab").add(m_robotDrive.m_gyro);
     configureButtonBindings();
+<<<<<<< HEAD
     JoystickButton ArmRetractButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmRetract);
     JoystickButton ArmExtendButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmExtend);
     JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
@@ -104,6 +173,28 @@ public class RobotContainer {
     fireLauncher.toggleOnTrue(new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
     turnToLimelight.onTrue(new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, ()->0).withTimeout(3));
     driveToLimelight.onTrue(new LimelightCommands.DriveTo(m_robotDrive, m_limeLightTurret, 1));
+=======
+    JoystickButton armIntake = new JoystickButton(mechanismJoystick, 2);
+    JoystickButton armInside = new JoystickButton(mechanismJoystick, 1);
+    JoystickButton armAmp = new JoystickButton(mechanismJoystick, 3);
+    JoystickButton intakeUntilNote = new JoystickButton(mechanismJoystick, 4);
+    JoystickButton intakeIn = new JoystickButton(mechanismJoystick, 8);
+    JoystickButton intakeOut = new JoystickButton(mechanismJoystick, 5);
+    JoystickButton fireLauncher = new JoystickButton(mechanismJoystick, 6);
+    JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
+    JoystickButton driveToLimelight = new JoystickButton(m_driverController, 2);
+    //JoystickButton fireLauncher = new JoystickButton(m_driverController, 3);
+    //JoystickButton intake = new JoystickButton(m_driverController, Constants.IntakeConstants.intakeButton);
+    //JoystickButton outtake = new JoystickButton(m_driverController, Constants.IntakeConstants.outtakeButton);
+    //fireLauncher.toggleOnTrue(new FireSingleMotorLauncherCommand(m_singleMotorLauncher));
+    //turnToLimelight.onTrue(new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, ()->0).withTimeout(3));
+    //driveToLimelight.onTrue(new LimelightCommands.DriveTo(m_robotDrive, m_limeLightTurret, 1));
+    armInside.onTrue(stowArm(m_wrist, m_arm, m_intake));
+    armIntake.onTrue(toIntake(m_wrist, m_arm, m_intake));
+    armAmp.onTrue(toAmp(m_wrist, m_arm, m_intake,m_aim));
+    intakeUntilNote.onTrue(intakeUntilNote(m_wrist, m_arm, m_intake));
+    fireLauncher.onTrue(fireLauncher(m_wrist, m_arm, m_intake, m_aim, m_launcher));
+>>>>>>> origin/JackCorsoBranch
     //Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -117,11 +208,14 @@ public class RobotContainer {
             m_robotDrive));
     m_limeLightChassis.setDefaultCommand(new LimelightTestCommand(m_limeLightChassis));
     m_limeLightTurret.setDefaultCommand(new LimelightTestCommand(m_limeLightTurret));
-    IntakeStateCommand intakeStateCmd = new IntakeStateCommand(m_intake);
-    intakeStateCmd.setButtons(m_driverController::getLeftBumper,m_driverController::getRightBumper); //configure keybinds for intake
+    IntakeStateCommand intakeStateCmd = new IntakeStateCommand(m_intake,false);
+    intakeStateCmd.setButtons(intakeIn,intakeOut); //configure keybinds for intake
     m_intake.setDefaultCommand(intakeStateCmd);
+    //armIntake.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.intake));
+   // armInside.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.inside));
+    //armAmp.onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.amp));
   }
- 
+  
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -143,6 +237,69 @@ public class RobotContainer {
             coneFlipperDownButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ConeFlipperDown);
   }
 
+<<<<<<< HEAD
+=======
+  public static SequentialCommandGroup stowArm(WristProfiledPIDSubsystem m_wrist,ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake) {
+    final MoveArmAndWristCommand.Position stowPosition = MoveArmAndWristCommand.Position.inside;
+    return new SequentialCommandGroup(
+      new ConditionalCommand(
+        new MoveArmAndWristCommand(m_arm, m_wrist, stowPosition),
+        Commands.sequence(
+          new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.inside),
+          new IntakeStateCommand(m_intake, false,State.intake).withTimeout(2),
+          new MoveArmAndWristCommand(m_arm,m_wrist,stowPosition)
+        ),
+        ()-> m_wrist.getGoal()==WristStateCommand.Position.intake.getPos()
+      )
+     
+    );
+  }
+  public static SequentialCommandGroup toIntake(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm,IntakeSubsystem m_intake) {
+    return new SequentialCommandGroup(
+      // stowArm(m_wrist, m_arm, m_intake).onlyIf(()->
+      //   m_wrist.getGoal() != WristStateCommand.Position.inside.getPos() && //check if its not inside
+      //   m_wrist.getGoal() != WristStateCommand.Position.intake.getPos()//check if its not already at intake), //if the arm isnt ready to move, it stows first
+      // ),
+      new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.intake),
+      new InstantCommand(()->m_intake.setHasNote(false))
+    );
+  }
+  public static SequentialCommandGroup toAmp(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm,IntakeSubsystem m_intake,VerticalAimerProfiledPIDSubsystem m_aim) {
+    return new SequentialCommandGroup(
+      // stowArm(m_wrist, m_arm, m_intake).onlyIf(()->
+      //   m_wrist.getGoal() != WristStateCommand.Position.inside.getPos() && //check if its not inside
+      //   m_wrist.getGoal() != WristStateCommand.Position.amp.getPos()//check if its not already at amp), //if the arm isnt ready to move, it stows first
+      // ),
+      Commands.parallel(
+      new VerticalAimerStateCommand(m_aim, VerticalAimerStateCommand.Position.fire),
+      new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.amp)
+      ),
+      new InstantCommand(()->m_intake.setHasNote(false))
+    );
+  }
+  public static SequentialCommandGroup intakeUntilNote(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake) {
+    return new SequentialCommandGroup(
+      new IntakeStateCommand(m_intake,true,State.intake).until(m_intake::hasNote),
+      stowArm(m_wrist, m_arm, m_intake)
+    ).onlyIf(()->m_wrist.getGoal() == WristStateCommand.Position.intake.getPos()).andThen(Commands.none());
+  }
+  // public static SequentialCommandGroup alignForLaunch(DriveSubsystem m_drive, LimelightSubsystem m_limelight) {
+  //   return new SequentialCommandGroup(new LimelightCommands.AlignAtDistance(m_limelight, m_drive, 0));
+  // }
+  public static SequentialCommandGroup fireLauncher(WristProfiledPIDSubsystem m_wrist, ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake, VerticalAimerProfiledPIDSubsystem m_aim,LauncherSubsystem m_launch) {
+    return new SequentialCommandGroup(
+     // stowArm(m_wrist, m_arm, m_intake),
+      new VerticalAimerStateCommand(m_aim,VerticalAimerStateCommand.Position.fire).until(m_aim::atGoal),
+      Commands.race(
+        new FireLauncherCommand(m_launch),
+        Commands.sequence(
+          new WaitCommand(2.5),
+          new IntakeStateCommand(m_intake,false,IntakeStateCommand.State.outtake).withTimeout(3.5)
+        )
+      )
+    );
+  }
+>>>>>>> origin/JackCorsoBranch
   public static boolean getIntakeButton() {
     return m_driverController.getLeftBumper();
   }
@@ -199,10 +356,13 @@ public static boolean GetGrabberCloseCubeButton() {
       return alllianceChooser.getSelected();
   }
   
-
   public void disablePIDSubsystems() {
-    //m_GrabberWithPID.disable();
-    //m_ArmWithPID.disable();
+    m_arm.disable();
+    m_wrist.disable();
+    m_aim.disable();
+    m_arm.setGoal(0);
+    m_wrist.setGoal(0);
+    m_aim.setGoal(0);
   }
   //Comment To Test Merges
   /**
