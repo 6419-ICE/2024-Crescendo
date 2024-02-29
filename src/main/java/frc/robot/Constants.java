@@ -149,11 +149,6 @@ public final class Constants {
   }
   
   public static final class GamePadConstants {
-    public static final int ConeFlipperUp = 1;
-    public static final int ConeFlipperDown = 2;
-    public static final int GrabberOpen = 3;
-    public static final int GrabberClose = 4;
-    public static final int GrabberCloseCube = 5;
     public static final int ArmRetract = 6;
     public static final int ArmExtend = 7;
     public static final int ArmGround = 8;
@@ -174,6 +169,7 @@ public final class Constants {
     // Distance from the center of the limelight lens to the floor
     public static final double limelightHeight = 10.5; //todo
   }
+  
   public static class LauncherConstants {
     public static final int leftMotorID = 14;
     public static final int rightMotorID = 13;
