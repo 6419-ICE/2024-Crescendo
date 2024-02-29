@@ -14,6 +14,7 @@ public class VerticalAimerProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         super(Constants.LauncherConstants.verticalAimPID);
         motor = new CANSparkMax(Constants.LauncherConstants.verticalAimMotor, MotorType.kBrushless);
         motor.getEncoder().setPosition(0);
+        getController().setTolerance(2);
     }
     @Override
     public void useOutput(double output, State setpoint) {

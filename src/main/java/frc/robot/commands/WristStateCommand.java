@@ -10,6 +10,7 @@ public class WristStateCommand extends Command {
         intake(210.0),
         load(0.0),
         amp(140.0),
+        balance(90.0),
         inside(90.0); //30
         //class stuff DONT TOUCH!!!
         private final double pos;
@@ -32,4 +33,5 @@ public class WristStateCommand extends Command {
         m_wrist.setGoal(pos.getPos());
         m_wrist.enable();
     }
+    
 }

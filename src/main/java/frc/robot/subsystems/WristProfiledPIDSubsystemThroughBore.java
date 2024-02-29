@@ -30,7 +30,7 @@ public class WristProfiledPIDSubsystemThroughBore extends FilteredProfiledPIDSub
     TalonFX motor;
     Encoder encoder = new Encoder(0,1); //new
     public WristProfiledPIDSubsystemThroughBore() {
-        super(Constants.IntakeConstants.wristPIDController,
+        super(Constants.IntakeConstants.wristBorePIDController,
             intake,
             inside,
             load,

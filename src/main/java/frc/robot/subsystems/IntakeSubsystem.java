@@ -8,6 +8,7 @@ import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
     CANSparkMax motor;
+    boolean hasNote = false;
     public IntakeSubsystem() {
         motor = new CANSparkMax(Constants.IntakeConstants.intakeMotorID,MotorType.kBrushless);
     }
@@ -16,5 +17,11 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     public CANSparkMax getMotor() {
         return motor;
+    }
+    public boolean hasNote() {
+        return hasNote;
+    }
+    public void setHasNote(boolean hasNote) {
+        this.hasNote = hasNote;
     }
 }

@@ -45,7 +45,7 @@ public class ArmProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         return getController().getGoal().position;
     }
     public boolean atGoal() {
-       double error = MathUtil.applyDeadband(getGoal() - getMeasurement(),Constants.ArmConstants.tolerance);
+       double error = MathUtil.applyDeadband(getGoal() - getMeasurement(),0.5);
         return error == 0;
     }
     /**

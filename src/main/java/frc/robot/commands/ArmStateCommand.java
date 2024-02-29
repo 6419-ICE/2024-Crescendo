@@ -9,6 +9,7 @@ public class ArmStateCommand extends Command {
         intake(0.0),
         load(0.0),
         amp(155.0),
+        balance(90),
         inside(0.0); //30
         //class stuff DONT TOUCH!!!
         private final double pos;

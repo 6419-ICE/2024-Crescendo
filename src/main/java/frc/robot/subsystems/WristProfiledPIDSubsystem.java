@@ -31,7 +31,8 @@ public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
     }
     @Override
     public void useOutput(double output, State setpoint) {
-        motor.set(Math.max(Math.abs(output),Constants.IntakeConstants.minPower) * (output > 0 ? 1 : -1));
+       // Math.max(Math.abs(output),Constants.IntakeConstants.minPower) * (output > 0 ? 1 : -1)
+        motor.set(output);
     }
     
     @Override
@@ -55,5 +56,8 @@ public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
     public static double getDegrees(double ticks) {
         //return ticks/Constants.IntakeConstants.throughBorePulsesPerDegree;
         return ticks/Constants.IntakeConstants.ticksPerDegree;
+    }
+    public TalonFX getMotor() {
+        return motor;
     }
 }
