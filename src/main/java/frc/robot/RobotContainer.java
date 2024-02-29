@@ -93,6 +93,7 @@ public class RobotContainer {
     //Shuffleboard.getTab("Gryo tab").add(m_robotDrive.m_gyro);
     configureButtonBindings();
     JoystickButton ArmRetractButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmRetract);
+    JoystickButton ArmExtendButton = new JoystickButton(mechanismJoystick, Constants.GamePadConstants.ArmExtend);
     JoystickButton turnToLimelight = new JoystickButton(m_driverController, 1);
     JoystickButton driveToLimelight = new JoystickButton(m_driverController, 2);
     JoystickButton fireLauncher = new JoystickButton(m_driverController, 3);
