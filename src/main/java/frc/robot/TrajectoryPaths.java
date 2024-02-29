@@ -25,7 +25,8 @@ public class TrajectoryPaths {
         registerPathWeaverTrajectories( 
             "Test",
             "FireAndNote",
-            "CenterFireAndNote"
+            "CenterFireAndNote",
+            "FarSidePath"
         );
     }
     //private DriveSubsystem m_driveSubSystem; 
@@ -133,6 +134,10 @@ public static Trajectory BackOnCharge () {
         //93
         return trajectory; 
     }
+
+// Test Trajectory to go forward for ring launch
+    
+
 //
     // These sets of trajectories are being used to Create the Two Cube Autonomus Program
 //region TwoBlockAuto
@@ -413,6 +418,47 @@ public static Trajectory GoBackwardsToDropBlockFast () {
     
             return trajectory; 
     }
+
+    // public static Trajectory turnToSpeaker () {
+    //     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+    //     new Pose2d(0, 0, new Rotation2d(0)),
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(new Translation2d(0.1,0.1)),
+    //     // End 3 "meters" straight ahead of where we started, facing forward
+    //     new Pose2d(0, 0, new Rotation2d(45)),
+    //             config);
+        
+    //             return trajectory; 
+    //     }
+
+    // // Test Trajectory to go forward for ring launch
+    // public static Trajectory straightToNote () {
+    //     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+    //     new Pose2d(0, 0, new Rotation2d(0)),
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(new Translation2d(1,-0.25)),
+    //     // End 3 "meters" straight ahead of where we started, facing forward
+    //     new Pose2d(2, -0.5, new Rotation2d(-45)),
+    //             config);
+        
+    //             return trajectory; 
+    //     }
+
+    // public static Trajectory backToSpeaker () {
+    //     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+    //     new Pose2d(2, -0.5, new Rotation2d(-45)),
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(new Translation2d(1,-0.25)),
+    //     // End 3 "meters" straight ahead of where we started, facing forward
+    //     new Pose2d(0, 0, new Rotation2d(0)),
+    //         config);
+    //         return trajectory; 
+    //     }
+
+    
 
     public static Trajectory trajectoryAutoDriveOutLeft() {
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(

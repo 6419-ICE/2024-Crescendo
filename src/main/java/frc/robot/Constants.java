@@ -148,11 +148,6 @@ public final class Constants {
   }
   
   public static final class GamePadConstants {
-    public static final int ConeFlipperUp = 1;
-    public static final int ConeFlipperDown = 2;
-    public static final int GrabberOpen = 3;
-    public static final int GrabberClose = 4;
-    public static final int GrabberCloseCube = 5;
     public static final int ArmRetract = 6;
     public static final int ArmExtend = 7;
     public static final int ArmGround = 8;
@@ -173,6 +168,7 @@ public final class Constants {
     // Distance from the center of the limelight lens to the floor
     public static final double limelightHeight = 10.5; //todo
   }
+  
   public static class LauncherConstants {
     public static final int leftMotorID = 14;
     public static final int rightMotorID = 13;
@@ -231,5 +227,23 @@ public final class Constants {
     );
     public static final double tolerance = 4;
     public static final double minPower = 0.015;
+  }
+  
+
+  public static class HangerConstants {
+    public static final int hangerMotorID = 30;
+    public static final double hangerUpPower = 0.1;
+    public static final double hangerDownPower = -0.1;
+    public static final ProfiledPIDController hangerController = new ProfiledPIDController(
+      0,
+      0,
+      0,
+      new TrapezoidProfile.Constraints(0, 0)
+    );
+    public static final double top = 0.0;
+    public static final double bottom = 0.0;
+    public static int hangTopButton = 0;
+    public static int hangBottomButton = 1;
+
   }
 }
