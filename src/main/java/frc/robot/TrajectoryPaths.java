@@ -26,7 +26,13 @@ public class TrajectoryPaths {
             "Test",
             "FireAndNote",
             "CenterFireAndNote",
-            "FarSidePath"
+            "FarSidePath",
+            "Auto2NS1",
+            "Auto2NS2",
+            "Auto2NS3",
+            "Auto2NS1Red",
+            "Auto2NS2Red",
+            "Auto2NS3Red"
         );
     }
     //private DriveSubsystem m_driveSubSystem; 

@@ -27,6 +27,8 @@ import frc.robot.commands.ArmStateCommand;
 import frc.robot.commands.ArmTestAuto;
 import frc.robot.commands.AutoDriveOutOfCommunity;
 import frc.robot.commands.AutoTestForPaths;
+import frc.robot.commands.AutoTwoNoteSpeakerBlue1;
+import frc.robot.commands.AutoTwoNoteSpeakerRed1;
 import frc.robot.commands.DistanceTestCommand;
 import frc.robot.commands.EncoderTest;
 import frc.robot.commands.FireLauncherCommand;
@@ -120,6 +122,9 @@ public class RobotContainer {
     autoChooser.addOption("Arm test", new ArmTestAuto(m_wrist,m_arm));
     autoChooser.addOption("launch test", new LauncherAngleTestAuto(m_aim));
     autoChooser.addOption("encoder test", new EncoderTest(m_wristBore));
+    autoChooser.addOption("Two Notes Speaker Blue 1", new AutoTwoNoteSpeakerBlue1(m_aim, m_robotDrive, m_intake, m_wrist, m_arm, m_launcher));
+    autoChooser.addOption("Two Notes Speaker Red1", new AutoTwoNoteSpeakerRed1(m_aim, m_robotDrive, m_intake, m_wrist, m_arm, m_launcher));
+
       // autoChooser.addOption("Auto Engage on Charging Station Center", new AutoEngageOnChargingStation(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Left", new AutoDriveOutAndChargeLeft(m_robotDrive));
     //autoChooser.addOption("Auto Charge on Charging Station Right ", new AutoDriveOutAndChargeRight(m_robotDrive));

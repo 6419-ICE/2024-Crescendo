@@ -21,9 +21,9 @@ public class VerticalAimerStateCommand extends Command {
     }
     private Position pos;
     private VerticalAimerProfiledPIDSubsystem m_aim;
-    public VerticalAimerStateCommand(VerticalAimerProfiledPIDSubsystem m_aim,Position initialPos) {
-        pos = initialPos;
-        this.m_aim = m_aim;
+    public VerticalAimerStateCommand(VerticalAimerProfiledPIDSubsystem m_aim2,Position fire) {
+        pos = fire;
+        this.m_aim = m_aim2;
     }
     @Override
     public void initialize() {
