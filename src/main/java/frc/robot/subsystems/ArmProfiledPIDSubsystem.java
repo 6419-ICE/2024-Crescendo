@@ -6,6 +6,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -23,11 +24,10 @@ public class ArmProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         motor.setPosition(0);
         encoderVal = motor.getPosition();
         velocityVal = motor.getVelocity();
-        getController().setTolerance(Constants.ArmConstants.controllerTolerance);
     }
     @Override
     public void useOutput(double output, State setpoint) {
-        motor.set(output);
+        motor.set(Math.max(Math.abs(output),Constants.ArmConstants.minPower)*(output > 0 ? 1 : -1));
     }
 
     @Override
@@ -45,7 +45,8 @@ public class ArmProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         return getController().getGoal().position;
     }
     public boolean atGoal() {
-        return getController().atGoal();
+       double error = MathUtil.applyDeadband(getGoal() - getMeasurement(),0.5);
+        return error == 0;
     }
     /**
      * 

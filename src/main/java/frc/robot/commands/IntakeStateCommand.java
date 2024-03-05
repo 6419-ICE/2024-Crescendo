@@ -37,21 +37,26 @@ public class IntakeStateCommand extends Command {
     private IntakeSubsystem m_intake;
     private State currentState; //stores the current State of the intake
     private BooleanSupplier intake,outtake; //intake/outtake buttons
-    public IntakeStateCommand(IntakeSubsystem m_intake) {
-        this(m_intake,State.idle);
+    private boolean canFreeze;
+    public IntakeStateCommand(IntakeSubsystem m_intake, boolean canFreeze) {
+        this(m_intake,canFreeze,State.idle);
     }
-    public IntakeStateCommand(IntakeSubsystem m_intake,State initialState) {
+    public IntakeStateCommand(IntakeSubsystem m_intake,boolean canFreeze,State initialState) {
         this.m_intake = m_intake;
         addRequirements(this.m_intake);
         currentState = initialState;
+        this.canFreeze = canFreeze;
     }
     @Override
     public void execute() {
         if (m_intake.getMotor().getOutputCurrent() > 40) { //checks if the intake is pulling in a note by checking if the output current is higher than usual.
             if (highAmpCount < 3) highAmpCount++; //this counter prevents the motor's startup current from triggering a freeze
-            else setState(State.frozen); //todo make this retract arm too (Idealy the intake will be frozen when inside the robot, for now I manually freeze it here)
+            else {
+                m_intake.setHasNote(true);
+            } //todo make this retract arm too (Idealy the intake will be frozen when inside the robot, for now I manually freeze it here)
         }  else highAmpCount = 0; //reset counter when current returns to normal
-        if (intake != null && outtake != null) { //check if buttons have been fully binded before checking for input. Also checks if the intake is "frozen"
+        setState(m_intake.hasNote() && canFreeze ? State.frozen : getState());
+        if (intake != null && outtake != null && getState() != State.frozen) { //check if buttons have been fully binded before checking for input. Also checks if the intake is "frozen"
             //set states based on input. If multiple buttons are pressed, intake takes priority
             if (intake.getAsBoolean()) setState(State.intake); 
             else if (outtake.getAsBoolean()) setState(State.outtake);
@@ -70,6 +75,9 @@ public class IntakeStateCommand extends Command {
      */
     public void setState(State state) {
         currentState = state;
+    }
+    public State getState() {
+        return currentState;
     }
     /**
      * sets the buttons for intaking & outtaking. You can give this method a {@link JoystickButton}, as it extends BooleanSupplier.
