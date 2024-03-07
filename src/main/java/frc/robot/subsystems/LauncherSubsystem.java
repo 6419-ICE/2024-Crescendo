@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
@@ -11,10 +12,14 @@ import frc.robot.Constants;
 public class LauncherSubsystem extends SubsystemBase {
     private TalonFX leftMotor;
     private TalonFX rightMotor;
+    private StatusSignal<Double> leftVelo;
+    private StatusSignal<Double> rightVelo;
     public LauncherSubsystem() {
         leftMotor = new TalonFX(Constants.LauncherConstants.leftMotorID);
         rightMotor = new TalonFX(Constants.LauncherConstants.rightMotorID);
         //leftMotor.setInverted(true); this isnt working??? maybe its already inversed so I need to set it false?
+        leftVelo = leftMotor.getVelocity();
+        rightVelo = rightMotor.getVelocity();
     
     }
     public void setPower(double speed) {
@@ -22,7 +27,13 @@ public class LauncherSubsystem extends SubsystemBase {
         leftMotor.set(-speed); //inversed didnt work, so I reverse the speed
     }
     public void setVelocity(double velo) {
-        rightMotor.setControl(new VelocityVoltage(velo));
+        rightMotor.setControl(new VelocityVoltage(-velo));
         leftMotor.setControl(new VelocityVoltage(-velo));
+    }
+    /** 
+     * @return the two motor velocities averaged out
+     */
+    public double getAverageVelocity() {
+        return (leftVelo.refresh().getValueAsDouble() + rightVelo.refresh().getValueAsDouble())/2.0;
     }
 }

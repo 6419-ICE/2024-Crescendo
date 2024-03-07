@@ -26,6 +26,13 @@ public class ArmProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         velocityVal = motor.getVelocity();
     }
     @Override
+    public void periodic() {
+        super.periodic();
+        SmartDashboard.putBoolean("arm reset",MathUtil.applyDeadband(getMeasurement(),0.05) == 0);
+        SmartDashboard.putNumber("arm pos", getMeasurement());
+        SmartDashboard.updateValues();
+    }
+    @Override
     public void useOutput(double output, State setpoint) {
         motor.set(Math.max(Math.abs(output),Constants.ArmConstants.minPower)*(output > 0 ? 1 : -1));
     }
@@ -45,7 +52,7 @@ public class ArmProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         return getController().getGoal().position;
     }
     public boolean atGoal() {
-       double error = MathUtil.applyDeadband(getGoal() - getMeasurement(),0.5);
+       double error = MathUtil.applyDeadband(getGoal() - getMeasurement(),Constants.ArmConstants.tolerance);
         return error == 0;
     }
     /**

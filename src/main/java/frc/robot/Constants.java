@@ -153,6 +153,22 @@ public final class Constants {
     public static final int ArmGround = 8;
 
   }
+  public static final class ButtonboxConstants {
+    //arm
+    public static final int armInside = 1;
+    public static final int armAmp = 3;
+    public static final int armIntake = 2;
+    public static final int armBalance = 10;
+    //intake
+    public static final int intake = 4;
+    public static final int outtake = 5;
+    public static final int slowIntake = 8;
+    //launcher
+    public static final int fireLauncher = 6;
+    //hanger
+    public static final int hangerDown = 9;
+    
+  }
 
   public static class LimelightConstants {
     public static final PIDController rotatePID = new PIDController(0.03, 0, 0);
@@ -192,8 +208,8 @@ public final class Constants {
     public static int outtakeButton = 5;
     //wrist
     public static final int wristMotorID = 12;
-    public static final double ticksPerRotation = 45 * (42/24);
-    public static final double ticksPerDegree = ticksPerRotation/360;
+    public static final double ticksPerRotation = 45f * (44f/15f); //(42f/24f)
+    public static final double ticksPerDegree = ticksPerRotation/360f;
     //through-bore
     public static final double maxPower = 0.3;
     public static final double throughBorePulsesPerRotation = 2048;
@@ -223,7 +239,7 @@ public final class Constants {
       0.01, //Kp
       0, //Ki
       0, //Kd
-      new TrapezoidProfile.Constraints(150, 150)//TODO change these!
+      new TrapezoidProfile.Constraints(200, 200)//TODO change these!
     );
     public static final double tolerance = 4;
     public static final double minPower = 0.015;
@@ -233,7 +249,7 @@ public final class Constants {
   public static class HangerConstants {
     public static final int hangerMotorID = 30;
     public static final double hangerUpPower = 0.1;
-    public static final double hangerDownPower = -0.1;
+    public static final double hangerDownPower = -0.2;
     public static final ProfiledPIDController hangerController = new ProfiledPIDController(
       0,
       0,

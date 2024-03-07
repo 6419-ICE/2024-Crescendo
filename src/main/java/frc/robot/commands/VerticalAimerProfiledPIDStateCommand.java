@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.VerticalAimerProfiledPIDSubsystem;
 
+/**
+ * @deprecated use {@link VerticalAimerStateCommand} instead
+ */
+@Deprecated
 public class VerticalAimerProfiledPIDStateCommand extends ProfiledPIDCommand {
 
     public enum Position {

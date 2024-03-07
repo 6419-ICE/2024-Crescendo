@@ -26,7 +26,8 @@ public class TrajectoryPaths {
             "Test",
             "FireAndNote",
             "CenterFireAndNote",
-            "FarSidePath"
+            "FarSidePath",
+            "AmpScore"
         );
     }
     //private DriveSubsystem m_driveSubSystem; 
@@ -532,5 +533,17 @@ public static Trajectory GoBackwardsToDropBlockFast () {
     
     public static Trajectory getPathWeaverTrajectory(String name) {
         return pathWeaverTrajectories.get(name);
+    }
+
+    public static Trajectory moveForward(double meters) {
+        return moveForward(meters,0);
+    }
+    public static Trajectory moveForward(double meters, double rotationDegrees) {
+        return TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0,0,Rotation2d.fromDegrees(rotationDegrees)),
+            List.of(new Translation2d(meters/2.0,0)),
+            new Pose2d(meters,0,Rotation2d.fromDegrees(rotationDegrees)),
+            config
+        );
     }
 }

@@ -35,11 +35,9 @@ public class HangerStateCommand extends Command{
              *   m_hanger.setPower(Constants.HangerConstants.hangerUpPower);
              */
 
-            case down:
-            m_hanger.setPower(Constants.HangerConstants.hangerDownPower);
+            case down -> m_hanger.setPower(Constants.HangerConstants.hangerDownPower);
 
-            case idle:
-            m_hanger.setPower(0);
+            case idle -> m_hanger.setPower(0);
 
         }
     }

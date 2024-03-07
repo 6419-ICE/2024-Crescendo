@@ -30,9 +30,16 @@ public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
         //getController().setTolerance(Constants.IntakeConstants.tolerance);
     }
     @Override
+    public void periodic() {
+        super.periodic();
+        SmartDashboard.putBoolean("wrist reset",MathUtil.applyDeadband(getMeasurement(),0.05) == 0);
+        SmartDashboard.putNumber("wrist pos", getMeasurement());
+        SmartDashboard.updateValues();
+    }
+    @Override
     public void useOutput(double output, State setpoint) {
        // Math.max(Math.abs(output),Constants.IntakeConstants.minPower) * (output > 0 ? 1 : -1)
-        motor.set(output);
+       motor.set(output);
     }
     
     @Override
@@ -59,5 +66,12 @@ public class WristProfiledPIDSubsystem extends ProfiledPIDSubsystem {
     }
     public TalonFX getMotor() {
         return motor;
+    }
+    public void resetPosition() {
+        motor.setPosition(0);
+    }
+    public void setPower(double power) {
+        disable();
+        motor.set(power);
     }
 }
