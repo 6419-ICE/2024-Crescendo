@@ -49,7 +49,11 @@ public class HangerStateCommand extends Command{
     public HangPosition getState(HangPosition state) {
         return state;
     }
-
+    
+    @Override
+    public void end(boolean interrupted) {
+        m_hanger.setPower(0);
+    }
 
 
 }

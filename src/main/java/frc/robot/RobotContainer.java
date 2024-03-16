@@ -43,10 +43,12 @@ import frc.robot.commands.PathWeaverTestAuto;
 import frc.robot.commands.VerticalAimerStateCommand;
 import frc.robot.commands.WristStateCommand;
 import frc.robot.commands.ArmProfiledPIDStateCommand.Position;
+import frc.robot.commands.HangerStateCommand.HangPosition;
 import frc.robot.commands.IntakeStateCommand.State;
 import frc.robot.commands.auto.AmpScoreOneNote;
 import frc.robot.commands.auto.DriveFortyAndShoot;
 import frc.robot.commands.auto.MiddleTwoNoteAuto;
+import frc.robot.commands.auto.RedAmpSideFar;
 import frc.robot.subsystems.ArmProfiledPIDSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HangerSubsystem;
@@ -59,6 +61,7 @@ import frc.robot.subsystems.VerticalAimerProfiledPIDSubsystemThroughBore;
 import frc.robot.subsystems.WristProfiledPIDSubsystem;
 import frc.robot.subsystems.WristProfiledPIDSubsystemThroughBore;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -66,6 +69,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -113,6 +117,15 @@ public class RobotContainer {
   public static GenericEntry kiEntry;
   public static GenericEntry kdEntry;
   public RobotContainer() {
+    TrajectoryPaths.registerPathWeaverTrajectories( 
+      "Test",
+      "FireAndNote",
+      "CenterFireAndNote",
+      "FarSidePath",
+      "AmpScore",
+      "RedAmpSideGoFar",
+      "RedAmpSideToFire1"
+    );
     alllianceChooser = new SendableChooser<>();
     alllianceChooser.setDefaultOption("None", null);
     alllianceChooser.addOption("Red", true);
@@ -132,6 +145,7 @@ public class RobotContainer {
     autoChooser.addOption("Arm test", new ArmTestAuto(m_wrist,m_arm));
    // autoChooser.addOption("launch test", new LauncherAngleTestAuto(m_aim));
     autoChooser.addOption("encoder test", new EncoderTest(m_wristBore));
+    autoChooser.addOption("Red Amp Far Side", new RedAmpSideFar(m_robotDrive,m_wrist, m_arm, m_intake, m_launcher));
     //autoChooser.addOption("Middle Two Note Auto", new MiddleTwoNoteAuto(m_robotDrive, m_wrist, m_arm, m_intake, m_aim, m_launcher));
     //autoChooser.addOption("One Note Amp",  new AmpScoreOneNote(m_robotDrive, m_wrist, m_arm, m_intake, m_aim));
    // autoChooser.addOption("drive 40 note", new DriveFortyAndShoot(m_robotDrive, m_wrist, m_arm, m_intake, m_aim, m_launcher));
@@ -228,7 +242,7 @@ public class RobotContainer {
                 MathUtil.applyDeadband(-m_driverController.getLeftX(), 0.06),
                 MathUtil.applyDeadband(-m_driverController.getRightX(), 0.06),
                 true),
-            m_robotDrive));
+            m_robotDrive).handleInterrupt(()->m_robotDrive.drive(0, 0, 0, false)));
    // m_limeLightChassis.setDefaultCommand(new LimelightTestCommand(m_limeLightChassis));
    // m_limeLightTurret.setDefaultCommand(new LimelightTestCommand(m_limeLightTurret));
    
@@ -254,15 +268,26 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive
             ));
+    IntakeStateCommand intakeStateCmd = new IntakeStateCommand(m_intake,false);
+    intakeStateCmd.setButtons(
+      new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.intake).or(()->(m_driverController.getRightTriggerAxis() > 0)),
+      new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.outtake)
+    );
+    m_intake.setDefaultCommand(intakeStateCmd);
     //button box setup
     new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.armInside).onTrue(stowArm(m_wrist, m_arm, m_intake));
     new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.armIntake).onTrue(toIntake(m_wrist, m_arm, m_intake));
     new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.armAmp).onTrue(new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.ampLow));
     //new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.armBalance).onTrue(toBalancePositions(m_wrist, m_arm, m_aim));
-    new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.slowIntake).whileTrue(new RunCommand(()->m_intake.setSpeed(0.15)).handleInterrupt(()->m_intake.setSpeed(0)));
-    new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.fireLauncher);
-    new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.hangerDown);
-
+    new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.fireLauncher).onTrue(Commands.sequence(
+      new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.load),
+      Commands.race(
+        new FireLauncherCommand(m_launcher),
+        new WaitCommand(2.5).andThen(new IntakeStateCommand(m_intake, false,IntakeStateCommand.State.outtake).withTimeout(2.5))
+      )
+    ));
+    new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.slowIntake).whileTrue(Commands.startEnd(()->m_intake.setSpeed(0.15),()->m_intake.setSpeed(0), m_intake));
+    new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.hangerDown).whileTrue(new HangerStateCommand(m_hang, HangPosition.down));
     //Code for using joystick with hanger
     //new JoystickButton(mechanismJoystick, 10).onTrue(new VerticalAimerStateCommand(m_aim, VerticalAimerStateCommand.Position.fire).until(m_aim::atGoal));
     // m_aimTB.setDefaultCommand(
@@ -273,12 +298,7 @@ public class RobotContainer {
     //     SmartDashboard.putNumber("aim goal", m_aimTB.getGoal());
     //   }, m_aimTB).handleInterrupt(()->{m_aimTB.disable(); m_aimTB.setGoal(0);}))
     // );
-    IntakeStateCommand intakeStateCmd = new IntakeStateCommand(m_intake,false);
-    intakeStateCmd.setButtons(
-      new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.intake),
-      new JoystickButton(mechanismJoystick, Constants.ButtonboxConstants.outtake)
-    );
-    m_intake.setDefaultCommand(intakeStateCmd);
+
   }
   /**button 1*/
   public static Command stowArm(WristProfiledPIDSubsystem m_wrist,ArmProfiledPIDSubsystem m_arm, IntakeSubsystem m_intake) {
@@ -351,7 +371,7 @@ public class RobotContainer {
   }
   
   /**button 7
-   * @deprecated transferred to the triggers on driver controller
+   * @deprecated moved to the triggers on driver controller
   */
   @Deprecated
   public static Command toggleLauncherAngle(VerticalAimerProfiledPIDSubsystem m_aim) {

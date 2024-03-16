@@ -22,19 +22,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class TrajectoryPaths {
     private static final HashMap<String,Trajectory> pathWeaverTrajectories = new HashMap<>();
     static {
-        registerPathWeaverTrajectories( 
-            "Test",
-            "FireAndNote",
-            "CenterFireAndNote",
-            "FarSidePath",
-            "AmpScore"
-        );
+        //THIS HAS MOVED TO RobotContainer line 120
+        // registerPathWeaverTrajectories( 
+        //     "Test",
+        //     "FireAndNote",
+        //     "CenterFireAndNote",
+        //     "FarSidePath",
+        //     "AmpScore",
+        //     "RedAmpSideGoFar",
+        //     "RedAmpSideToFire1"
+        // );
     }
     //private DriveSubsystem m_driveSubSystem; 
 
      // Create config for trajectory
      
-  static TrajectoryConfig config = new TrajectoryConfig(
+  public static TrajectoryConfig config = new TrajectoryConfig(
     1,
     1)
     // Add kinematics to ensure max speed is actually obeyed

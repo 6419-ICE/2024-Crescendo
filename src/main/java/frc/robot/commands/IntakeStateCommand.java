@@ -49,12 +49,12 @@ public class IntakeStateCommand extends Command {
     }
     @Override
     public void execute() {
-        if (m_intake.getMotor().getOutputCurrent() > 40) { //checks if the intake is pulling in a note by checking if the output current is higher than usual.
-            if (highAmpCount < 3) highAmpCount++; //this counter prevents the motor's startup current from triggering a freeze
-            else {
-                m_intake.setHasNote(true);
-            } //todo make this retract arm too (Idealy the intake will be frozen when inside the robot, for now I manually freeze it here)
-        }  else highAmpCount = 0; //reset counter when current returns to normal
+        // if (m_intake.getMotor().getOutputCurrent() > 40) { //checks if the intake is pulling in a note by checking if the output current is higher than usual.
+        //     if (highAmpCount < 3) highAmpCount++; //this counter prevents the motor's startup current from triggering a freeze
+        //     else {
+        //         m_intake.setHasNote(true);
+        //     } //todo make this retract arm too (Idealy the intake will be frozen when inside the robot, for now I manually freeze it here)
+        // }  else highAmpCount = 0; //reset counter when current returns to normal
         setState(m_intake.hasNote() && canFreeze ? State.frozen : getState());
         if (intake != null && outtake != null && getState() != State.frozen) { //check if buttons have been fully binded before checking for input. Also checks if the intake is "frozen"
             //set states based on input. If multiple buttons are pressed, intake takes priority
@@ -68,6 +68,10 @@ public class IntakeStateCommand extends Command {
             case outtake -> m_intake.setSpeed(Constants.IntakeConstants.outtakeSpeed);
             case frozen -> m_intake.setSpeed(0);
         }
+    }
+    @Override
+    public void end(boolean interrupted) {
+        m_intake.setSpeed(0);
     }
     /**
      * sets the current {@link State} that this Command uses.

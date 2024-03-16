@@ -10,9 +10,10 @@ public class ArmStateCommand extends Command {
         //positions
         intake(0.0),
         load(0.0),
-        amp(155.0),
-        balance(165),
-        ampLow(25), //TODO
+        amp(155.0), //TODO change for new robot
+        balance(165), //TODO change for new robot
+        trap(125),
+        ampLow(0), //25->18->25
         inside(0.0); //30
         //class stuff DONT TOUCH!!!
         private final double pos;

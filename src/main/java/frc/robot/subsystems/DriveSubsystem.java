@@ -83,8 +83,23 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("PositionOfGyroForXaxis", m_gyro.getGyroAngleX());
         SmartDashboard.putNumber("PositionOfGyroForYaxis", m_gyro.getGyroAngleY());
         SmartDashboard.putNumber("PositionOfGyroForZaxis", m_gyro.getGyroAngleZ());
-
-
+        SmartDashboard.putNumberArray("Robot Encoder Distance", 
+          new Double[]{
+            m_frontLeft.getPosition().distanceMeters,
+            m_frontRight.getPosition().distanceMeters,
+            m_rearLeft.getPosition().distanceMeters,
+            m_rearRight.getPosition().distanceMeters
+          }
+        );
+        SmartDashboard.putNumberArray("Robot Encoder Angle", 
+          new Double[]{
+            m_frontLeft.getPosition().angle.getDegrees(),
+            m_frontRight.getPosition().angle.getDegrees(),
+            m_rearLeft.getPosition().angle.getDegrees(),
+            m_rearRight.getPosition().angle.getDegrees()
+          }
+        );
+        SmartDashboard.putString("Robot Pose", m_odometry.getPoseMeters().toString());
 
 
   }

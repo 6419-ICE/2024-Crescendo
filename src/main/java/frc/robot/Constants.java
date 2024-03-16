@@ -203,12 +203,12 @@ public final class Constants {
   public static class IntakeConstants {
     public static int intakeMotorID = 24;
     public static double intakeSpeed = 0.75;
-    public static double outtakeSpeed = -0.5;
+    public static double outtakeSpeed = -0.75;
     public static int intakeButton = 4;
     public static int outtakeButton = 5;
     //wrist
     public static final int wristMotorID = 12;
-    public static final double ticksPerRotation = 45f * (44f/15f); //(42f/24f)
+    public static final double ticksPerRotation = 45f * (32f/12f); //(42f/24f)->(44f/15f)->(32f/12f)
     public static final double ticksPerDegree = ticksPerRotation/360f;
     //through-bore
     public static final double maxPower = 0.3;
@@ -233,8 +233,8 @@ public final class Constants {
 
   public static class ArmConstants {
     public static final int motorID = 11; //todo 
-    public static final double ticksPerRotation = 45 * (48/12);
-    public static final double ticksPerDegree = ticksPerRotation/360; //1024.25
+    public static final double ticksPerRotation = 45 * (48f/12f);
+    public static final double ticksPerDegree = ticksPerRotation/360f; //1024.25
     public static final ProfiledPIDController controller = new ProfiledPIDController(
       0.01, //Kp
       0, //Ki
@@ -248,8 +248,8 @@ public final class Constants {
 
   public static class HangerConstants {
     public static final int hangerMotorID = 30;
-    public static final double hangerUpPower = 0.1;
-    public static final double hangerDownPower = -0.2;
+    public static final double hangerUpPower = -0.1;
+    public static final double hangerDownPower = 0.4;
     public static final ProfiledPIDController hangerController = new ProfiledPIDController(
       0,
       0,
