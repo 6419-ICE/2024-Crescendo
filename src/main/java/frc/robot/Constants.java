@@ -172,7 +172,7 @@ public final class Constants {
 
   public static class LimelightConstants {
     public static final PIDController rotatePID = new PIDController(0.03, 0, 0);
-    public static final String turretHostName = "-turret";
+    public static final String turretHostName = "-shooter";
     public static final String chassisHostName = "-body";
     //driving PID values
     public static final PIDController xPID = new PIDController(0.23,0,0);
@@ -195,7 +195,7 @@ public final class Constants {
     public static final double ticksPerRotation = 100 * (24/18);
     public static final double ticksPerDegree = ticksPerRotation/360;
     public static final ProfiledPIDController verticalAimPID = new ProfiledPIDController(
-      0.02, 
+      0.01, 
       0, 
       0,
       new TrapezoidProfile.Constraints(80,80));

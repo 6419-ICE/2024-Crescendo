@@ -6,8 +6,9 @@ import frc.robot.subsystems.VerticalAimerProfiledPIDSubsystem;
 public class VerticalAimerStateCommand extends Command {
     public enum Position {
         load(0),
-        fire(-10),
-        down(-48); //TODO TEST THIS
+        fireClose(0),
+        fireWing(-37.5 ),
+        down(-85); //TODO TEST THIS
         private double position;
         Position(double position) {
             this.position = position;
@@ -15,13 +16,10 @@ public class VerticalAimerStateCommand extends Command {
         public double getPosition() {
             return position;
         }
-        public void setPosition(double pos) {
-            if (this != fire) throw new IllegalCallerException("This method should only be used for \"fire\"");
-            position = pos;
-        }
         public static Position toPosition(double pos) {
             if (pos == Position.load.getPosition()) return Position.load;
-            else if (pos == Position.fire.getPosition()) return Position.fire;
+            else if (pos == Position.fireClose.getPosition()) return Position.fireClose;
+            else if (pos == Position.fireWing.getPosition()) return Position.fireWing;
             else if (pos == Position.down.getPosition()) return Position.down;
             return null;
         }
@@ -54,6 +52,7 @@ public class VerticalAimerStateCommand extends Command {
     }
     @Override
     public boolean isFinished() { 
+        System.out.println(m_aim.atGoal() + " : " + runOnce);
         return runOnce && m_aim.atGoal(); //if runOnce is false, this command never naturally finishes
     }
 }

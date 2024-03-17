@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 
 public final class Util {
     private Util(){}
@@ -16,5 +17,4 @@ public final class Util {
         boolean yNear = MathUtil.isNear(t1.getY(), t2.getY(), tolerance);
         return xNear && yNear;
     }
-    
 }

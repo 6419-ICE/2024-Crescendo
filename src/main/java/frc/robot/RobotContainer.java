@@ -48,7 +48,7 @@ import frc.robot.commands.IntakeStateCommand.State;
 import frc.robot.commands.auto.AmpScoreOneNote;
 import frc.robot.commands.auto.DriveFortyAndShoot;
 import frc.robot.commands.auto.MiddleTwoNoteAuto;
-import frc.robot.commands.auto.RedAmpSideFar;
+import frc.robot.commands.auto.AmpSideFar.RedAmpSideFar;
 import frc.robot.subsystems.ArmProfiledPIDSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HangerSubsystem;
@@ -69,6 +69,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -85,7 +86,7 @@ public class RobotContainer {
   // The robot's subsystems
  
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final LimelightSubsystem m_limeLightChassis = new LimelightSubsystem(Constants.LimelightConstants.chassisHostName);
+  //private final LimelightSubsystem m_limeLightChassis = new LimelightSubsystem(Constants.LimelightConstants.chassisHostName);
   private final LimelightSubsystem m_limeLightTurret = new LimelightSubsystem(Constants.LimelightConstants.turretHostName);
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
@@ -93,8 +94,8 @@ public class RobotContainer {
   private final ArmProfiledPIDSubsystem m_arm = new ArmProfiledPIDSubsystem();
   private final WristProfiledPIDSubsystem m_wrist = new WristProfiledPIDSubsystem();
   private final WristProfiledPIDSubsystemThroughBore m_wristBore = new WristProfiledPIDSubsystemThroughBore();
-  //private final VerticalAimerProfiledPIDSubsystem m_aim = new VerticalAimerProfiledPIDSubsystem();
-  private final VerticalAimerProfiledPIDSubsystemThroughBore m_aimTB = new VerticalAimerProfiledPIDSubsystemThroughBore();
+  private final VerticalAimerProfiledPIDSubsystem m_aim = new VerticalAimerProfiledPIDSubsystem();
+  //private final VerticalAimerProfiledPIDSubsystemThroughBore m_aimTB = new VerticalAimerProfiledPIDSubsystemThroughBore();
   private final HangerSubsystem m_hang = new HangerSubsystem();
   //private final Arm m_Arm = new Arm();
   // The driver's controller
@@ -133,7 +134,7 @@ public class RobotContainer {
     // Configure the button bindings
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("None", null);
-    autoChooser.addOption("Limelight test",new LimelightTestCommand(m_limeLightChassis).alongWith(new LimelightTestCommand(m_limeLightTurret)));
+    //autoChooser.addOption("Limelight test",new LimelightTestCommand(m_limeLightChassis).alongWith(new LimelightTestCommand(m_limeLightTurret)));
     //autoChooser.addOption("Auto Drive Out Of Community", new AutoDriveOutOfCommunity(m_robotDrive));
     autoChooser.addOption("Auto Test For Paths", new AutoTestForPaths(m_robotDrive));
     autoChooser.addOption("Turn to", new LimelightCommands.TurnTo(m_limeLightTurret, m_robotDrive, null));
@@ -143,9 +144,16 @@ public class RobotContainer {
     autoChooser.addOption("Move 2 meter", new DistanceTestCommand(m_robotDrive));
     autoChooser.addOption("PathWeaver test", new PathWeaverTestAuto(m_robotDrive,m_launcher));
     autoChooser.addOption("Arm test", new ArmTestAuto(m_wrist,m_arm));
-   // autoChooser.addOption("launch test", new LauncherAngleTestAuto(m_aim));
+    autoChooser.addOption("launch test", new LauncherAngleTestAuto(m_aim));
     autoChooser.addOption("encoder test", new EncoderTest(m_wristBore));
-    autoChooser.addOption("Red Amp Far Side", new RedAmpSideFar(m_robotDrive,m_wrist, m_arm, m_intake, m_launcher));
+    autoChooser.addOption("Red Amp Far Side", new RedAmpSideFar(m_robotDrive,m_wrist, m_arm, m_intake, m_launcher,m_aim));
+    autoChooser.addOption("test fire", Commands.sequence(
+      new VerticalAimerStateCommand(m_aim,VerticalAimerStateCommand.Position.fireWing).once(),
+      Commands.parallel(
+        new FireLauncherCommand(m_launcher),
+        new WaitUntilCommand(()->m_launcher.getAverageVelocity() <= -50).andThen(new IntakeStateCommand(m_intake, false, IntakeStateCommand.State.outtake))
+      )
+    ));
     //autoChooser.addOption("Middle Two Note Auto", new MiddleTwoNoteAuto(m_robotDrive, m_wrist, m_arm, m_intake, m_aim, m_launcher));
     //autoChooser.addOption("One Note Amp",  new AmpScoreOneNote(m_robotDrive, m_wrist, m_arm, m_intake, m_aim));
    // autoChooser.addOption("drive 40 note", new DriveFortyAndShoot(m_robotDrive, m_wrist, m_arm, m_intake, m_aim, m_launcher));
@@ -359,7 +367,7 @@ public class RobotContainer {
       new MoveArmAndWristCommand(m_arm, m_wrist, MoveArmAndWristCommand.Position.load),
      new VerticalAimerStateCommand(m_aim,VerticalAimerStateCommand.Position.load).once(), //.until -> .once
      //.onlyIf(()->VerticalAimerStateCommand.Position.toPosition(m_aim.getGoal()) == VerticalAimerStateCommand.Position.down),
-      new VerticalAimerStateCommand(m_aim,VerticalAimerStateCommand.Position.fire).once(), //.until -> .once
+      new VerticalAimerStateCommand(m_aim,VerticalAimerStateCommand.Position.fireClose).once(), //.until -> .once
       Commands.race(
         new FireLauncherCommand(m_launch),
         Commands.sequence(

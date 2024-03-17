@@ -6,14 +6,14 @@ import frc.robot.subsystems.WristProfiledPIDSubsystem;
 
 public class WristStateCommand extends Command {
     public enum Position {
-        //positions -14
-        intake(186.0), //210->205
-        load(0.0), //0
+        //positions // -14 when hard stops are put in
+        intake(200.0), //210->205
+        load(14.0), //0
         amp(107.0), //140 TODO change this for new robot
         balance(110.0),//90 TODO change this for new robot
-        trap(31.0), //TODO find actual value for this
-        ampLow(71.0), //109->105
-        inside(31.0); //90->60
+        trap(45.0), //TODO find actual value for this
+        ampLow(85.0), //109->105
+        inside(45.0); //90->60
         //class stuff DONT TOUCH!!!
         private final double pos;
         Position(double position) {

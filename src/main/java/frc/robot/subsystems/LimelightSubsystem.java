@@ -5,6 +5,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -45,6 +46,9 @@ public class LimelightSubsystem extends SubsystemBase {
         y = ty.getDouble(0.0);
         area = ta.getDouble(0.0);
         pose = tpose.getDoubleArray(new double[6]);
+        SmartDashboard.putNumber("Limelight width", x);
+        SmartDashboard.putNumber("Limelight height", y);
+        SmartDashboard.putNumber("Limelight Distance", pose[2]);
     }
     public double getX() {
         return x;

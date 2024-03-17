@@ -8,7 +8,8 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants;
-
+/**@deprecated This has been fully integrated into {@link VerticalAimerProfiledPIDSubsystem} */
+@Deprecated
 public class VerticalAimerProfiledPIDSubsystemThroughBore extends ProfiledPIDSubsystem {
     Encoder encoder;
     CANSparkMax motor;
