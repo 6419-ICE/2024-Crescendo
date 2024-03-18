@@ -12,7 +12,7 @@ public class WristStateCommand extends Command {
         amp(107.0), //140 TODO change this for new robot
         balance(110.0),//90 TODO change this for new robot
         trap(45.0), //TODO find actual value for this
-        ampLow(85.0), //109->105
+        ampLow(90.0), //85 //109->105
         inside(45.0); //90->60
         //class stuff DONT TOUCH!!!
         private final double pos;
