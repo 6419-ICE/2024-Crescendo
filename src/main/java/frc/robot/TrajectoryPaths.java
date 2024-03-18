@@ -38,8 +38,8 @@ public class TrajectoryPaths {
      // Create config for trajectory
      
   public static TrajectoryConfig config = new TrajectoryConfig(
-    1,
-    1)
+    8,
+    8) // 1,1 was old! 
     // Add kinematics to ensure max speed is actually obeyed
     .setKinematics(DriveConstants.kDriveKinematics);
 
